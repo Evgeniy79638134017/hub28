@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 860" role="img" aria-labelledby="pbTitle pbDesc" font-family="Inter, Arial, sans-serif">
+  <title id="pbTitle">Схема границ земельного участка 11,07 га с полосой отвода железной дороги</title>
+  <desc id="pbDesc">Участок 28:14:010311:1 вытянут вдоль полосы отвода железнодорожной линии Благовещенск — Белогорск. Внутри участка обозначен собственный железнодорожный путь 700 метров. С юго-западной стороны — станция Среднебелая, с южной — жилая застройка села.</desc>
+
+  <defs>
+    <pattern id="hatchRail" width="8" height="8" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+      <rect width="8" height="8" fill="#EEF1F6"/>
+      <line x1="0" y1="0" x2="0" y2="8" stroke="#C6CEDB" stroke-width="2"/>
+    </pattern>
+    <pattern id="hatchVillage" width="10" height="10" patternUnits="userSpaceOnUse">
+      <rect width="10" height="10" fill="#F5F7FA"/>
+      <circle cx="3" cy="3" r="1.2" fill="#D3DAE4"/>
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="860" fill="#FFFFFF"/>
+
+  <!-- Полоса отвода железной дороги (северо-западнее участка) -->
+  <g transform="rotate(-32 600 430)">
+    <rect x="-200" y="150" width="1700" height="120" fill="url(#hatchRail)"/>
+    <text x="330" y="196" font-size="20" fill="#5B6B7F" letter-spacing="1">Полоса отвода железной дороги</text>
+    <text x="330" y="222" font-size="16" fill="#8A95A5">линия Благовещенск — Белогорск · Забайкальская железная дорога</text>
+
+    <!-- Главный путь -->
+    <line x1="-200" y1="300" x2="1500" y2="300" stroke="#0F1B2D" stroke-width="6"/>
+    <g stroke="#0F1B2D" stroke-width="3">
+      <line x1="-190" y1="290" x2="-190" y2="310"/><line x1="-130" y1="290" x2="-130" y2="310"/>
+      <line x1="-70" y1="290" x2="-70" y2="310"/><line x1="-10" y1="290" x2="-10" y2="310"/>
+      <line x1="50" y1="290" x2="50" y2="310"/><line x1="110" y1="290" x2="110" y2="310"/>
+      <line x1="170" y1="290" x2="170" y2="310"/><line x1="230" y1="290" x2="230" y2="310"/>
+      <line x1="290" y1="290" x2="290" y2="310"/><line x1="350" y1="290" x2="350" y2="310"/>
+      <line x1="410" y1="290" x2="410" y2="310"/><line x1="470" y1="290" x2="470" y2="310"/>
+      <line x1="530" y1="290" x2="530" y2="310"/><line x1="590" y1="290" x2="590" y2="310"/>
+      <line x1="650" y1="290" x2="650" y2="310"/><line x1="710" y1="290" x2="710" y2="310"/>
+      <line x1="770" y1="290" x2="770" y2="310"/><line x1="830" y1="290" x2="830" y2="310"/>
+      <line x1="890" y1="290" x2="890" y2="310"/><line x1="950" y1="290" x2="950" y2="310"/>
+      <line x1="1010" y1="290" x2="1010" y2="310"/><line x1="1070" y1="290" x2="1070" y2="310"/>
+      <line x1="1130" y1="290" x2="1130" y2="310"/><line x1="1190" y1="290" x2="1190" y2="310"/>
+      <line x1="1250" y1="290" x2="1250" y2="310"/><line x1="1310" y1="290" x2="1310" y2="310"/>
+      <line x1="1370" y1="290" x2="1370" y2="310"/><line x1="1430" y1="290" x2="1430" y2="310"/>
+    </g>
+
+    <!-- Станция -->
+    <rect x="120" y="322" width="150" height="40" rx="6" fill="#1A237E"/>
+    <text x="195" y="348" font-size="17" fill="#FFFFFF" text-anchor="middle" font-weight="600">ст. Среднебелая</text>
+
+    <!-- Участок: вытянутый многоугольник вдоль полосы отвода -->
+    <path d="M 470 330
+             L 1050 330
+             L 1080 360
+             L 1085 470
+             L 1040 505
+             L 700 505
+             L 660 470
+             L 520 470
+             L 480 430
+             Z"
+          fill="#26A69A" fill-opacity="0.13" stroke="#1A237E" stroke-width="4" stroke-linejoin="round"/>
+
+    <!-- Собственный ж/д путь внутри участка -->
+    <line x1="500" y1="352" x2="1030" y2="352" stroke="#26A69A" stroke-width="5" stroke-dasharray="16 8"/>
+    <path d="M 500 352 Q 420 352 360 302" fill="none" stroke="#26A69A" stroke-width="5" stroke-dasharray="16 8"/>
+
+    <!-- Подписи участка -->
+    <text x="770" y="415" font-size="26" fill="#1A237E" text-anchor="middle" font-weight="700">Участок 28:14:010311:1</text>
+    <text x="770" y="448" font-size="21" fill="#1A237E" text-anchor="middle">11,07 га · аренда 49 лет</text>
+    <text x="765" y="338" font-size="16" fill="#1F7A70" font-weight="600" text-anchor="middle">железнодорожный путь 700 м · в собственности</text>
+  </g>
+
+  <!-- Жилая застройка села (юг) -->
+  <g>
+    <rect x="40" y="700" width="560" height="120" rx="10" fill="url(#hatchVillage)" stroke="#E3E8EF" stroke-width="1.5"/>
+    <text x="70" y="750" font-size="19" fill="#5B6B7F">Жилая застройка с. Среднебелая</text>
+    <text x="70" y="778" font-size="15" fill="#8A95A5">санитарные разрывы — см. раздел «Как есть»</text>
+  </g>
+
+  <!-- Стрелка направления на сухой порт -->
+  <g>
+    <line x1="1010" y1="180" x2="1130" y2="105" stroke="#26A69A" stroke-width="3"/>
+    <path d="M 1130 105 l -22 2 8 -18 z" fill="#26A69A" stroke="#26A69A"/>
+    <text x="1148" y="120" font-size="16" fill="#1F7A70" text-anchor="end" transform="rotate(0)">
+      <tspan x="1160" dy="0">сухой порт</tspan>
+      <tspan x="1160" dy="20">«Благовещенск»</tspan>
+      <tspan x="1160" dy="20">12 км по ж/д</tspan>
+    </text>
+  </g>
+
+  <!-- Стрелка направления на Белогорск -->
+  <g>
+    <line x1="180" y1="620" x2="70" y2="690" stroke="#5B6B7F" stroke-width="2.5"/>
+    <path d="M 70 690 l 21 -6 -10 17 z" fill="#5B6B7F" stroke="#5B6B7F"/>
+    <text x="195" y="618" font-size="16" fill="#5B6B7F">Белогорск · 60 км</text>
+  </g>
+
+  <!-- Север -->
+  <g transform="translate(1120 740)">
+    <circle r="34" fill="#FFFFFF" stroke="#E3E8EF" stroke-width="2"/>
+    <path d="M 0 -22 L 9 12 L 0 5 L -9 12 Z" fill="#1A237E"/>
+    <text y="28" font-size="15" fill="#5B6B7F" text-anchor="middle">С</text>
+  </g>
+
+  <!-- Сноска -->
+  <text x="40" y="845" font-size="14" fill="#8A95A5">Схема принципиальная, без масштаба. Основание — заключение кадастрового инженера от 11.09.2023.</text>
+</svg>
