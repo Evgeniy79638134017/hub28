@@ -18,15 +18,15 @@ var TEASER_READY = false;
 // Контакты Евгения — подставить перед публикацией.
 // Пока значения пустые, на странице остаётся «указывается при публикации».
 var CONTACTS = {
-  phone: '',      // формат: '+7 XXX XXX-XX-XX'
-  email: '',      // формат: 'name@domain.ru'
+  phone: '+7 914 550-05-03',
+  email: 'tumoff@mail.ru',
   telegram: '',   // формат: 'username' (без @)
   max: ''         // полная ссылка на профиль в MAX, например 'https://max.ru/u/...'
 };
 
-// Приём заявок: endpoint сервиса форм (Formspree / Getform или аналог).
-// Пример Formspree: 'https://formspree.io/f/XXXXXXXX'
-var FORM_ENDPOINT = '';
+// Приём заявок: FormSubmit (AJAX) — пересылает заявки на почту.
+// Первая отправка требует одноразового подтверждения по письму на этот адрес.
+var FORM_ENDPOINT = 'https://formsubmit.co/ajax/tumoff@mail.ru';
 
 // Аналитика. Пустая строка = счётчик не грузится.
 var YM_ID = '';   // Яндекс.Метрика, номер счётчика
@@ -144,6 +144,14 @@ function track(goal) {
       el.innerHTML = '<a href="' + CONTACTS.max + '" target="_blank" rel="noopener">написать в MAX</a>';
     });
   }
+  /* Пустые контакты — прячем строку целиком, чтобы не висело «указывается при публикации» */
+  ['phone', 'email', 'telegram', 'max'].forEach(function (k) {
+    if (CONTACTS[k]) return;
+    $all('[data-contact="' + k + '"]').forEach(function (el) {
+      var row = el.closest('.contact-row');
+      if (row) row.hidden = true;
+    });
+  });
 
   /* Клики-цели */
   document.addEventListener('click', function (e) {
@@ -350,6 +358,7 @@ function track(goal) {
     submitBtn.textContent = 'Отправляем…';
 
     var payload = {
+      _subject: 'Заявка с hub28.ru — площадка Среднебелая',
       name: name.value.trim(),
       company: $('#f-company').value.trim(),
       phone: phone.value.trim(),
