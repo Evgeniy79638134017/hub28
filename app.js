@@ -388,6 +388,109 @@ function track(goal) {
   });
 })();
 
+/* ---------------- ЛУПА ПЕРВОГО ЭКРАНА ----------------
+   Базовый слой — реальный спутник, под круглой маской — проектная
+   визуализация того же кадра. Слои выровнены по контуру участка. */
+
+(function () {
+  var stage = $('#lensStage');
+  if (!stage) return;
+  var layer = $('#lensLayer');
+  var tabs = $all('.lens-tab');
+  var demoDone = false;
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* На тач-экране курсора нет — меняем подсказку */
+  if (window.matchMedia('(hover: none)').matches) {
+    var hint = $('#lensHint');
+    if (hint) hint.textContent = 'Проведите пальцем — увидите проект';
+  }
+
+  function radius() {
+    var w = stage.clientWidth;
+    return Math.max(90, Math.min(190, Math.round(w * 0.22)));
+  }
+  function setLens(x, y) {
+    stage.style.setProperty('--lens-x', x + 'px');
+    stage.style.setProperty('--lens-y', y + 'px');
+    stage.style.setProperty('--lens-r', radius() + 'px');
+  }
+  function activate(on) {
+    stage.classList.toggle('is-active', on);
+  }
+
+  stage.addEventListener('pointermove', function (e) {
+    var r = stage.getBoundingClientRect();
+    demoDone = true;
+    activate(true);
+    setLens(e.clientX - r.left, e.clientY - r.top);
+  });
+  stage.addEventListener('pointerleave', function () {
+    if (window.matchMedia('(hover: none)').matches) return; /* на тач-экране лупа остаётся */
+    activate(false);
+  });
+  stage.addEventListener('pointerdown', function (e) {
+    var r = stage.getBoundingClientRect();
+    demoDone = true;
+    activate(true);
+    setLens(e.clientX - r.left, e.clientY - r.top);
+  });
+
+  /* Переключение сценария под лупой */
+  var SRC = {
+    terminal: 'lens-terminal',
+    sklad: 'lens-sklad',
+    container: 'lens-container',
+    wagons: 'lens-wagons'
+  };
+  tabs.forEach(function (btn) {
+    var key = btn.getAttribute('data-layer');
+    var preload = function () {
+      var i = new Image();
+      i.src = 'assets/' + SRC[key] + '-1200.webp';
+    };
+    btn.addEventListener('mouseenter', preload, { once: true });
+    btn.addEventListener('click', function () {
+      tabs.forEach(function (b) { b.classList.remove('is-active'); });
+      btn.classList.add('is-active');
+      var base = SRC[key];
+      layer.srcset = 'assets/' + base + '-768.webp 768w, assets/' + base + '-1200.webp 1200w, assets/' + base + '-1600.webp 1600w';
+      layer.src = 'assets/' + base + '-1200.jpg';
+      activate(true);
+    });
+  });
+
+  /* Одноразовая демонстрация: показать, что здесь интерактив */
+  function demo() {
+    if (demoDone || reduce) return;
+    var w = stage.clientWidth, h = stage.clientHeight;
+    var t0 = null, dur = 2600;
+    activate(true);
+    var step = function (ts) {
+      /* пользователь перехватил управление — просто прекращаем показ,
+         лупу не гасим: курсор уже внутри кадра */
+      if (demoDone) return;
+      if (!t0) t0 = ts;
+      var p = Math.min((ts - t0) / dur, 1);
+      var e = p < .5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+      setLens(w * (0.28 + 0.44 * e), h * (0.62 - 0.34 * e));
+      if (p < 1) requestAnimationFrame(step);
+      else setTimeout(function () { if (!demoDone) activate(false); }, 500);
+    };
+    requestAnimationFrame(step);
+  }
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (en) {
+      if (en[0].isIntersecting) { setTimeout(demo, 700); io.disconnect(); }
+    }, { threshold: 0.5 });
+    io.observe(stage);
+  }
+
+  window.addEventListener('resize', function () {
+    stage.style.setProperty('--lens-r', radius() + 'px');
+  }, { passive: true });
+})();
+
 /* ---------------- ЛАЙТБОКС ---------------- */
 
 (function () {
