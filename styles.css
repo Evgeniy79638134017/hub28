@@ -112,7 +112,22 @@ main>.section+.section{border-top:1px solid transparent;}
 
 /* ---------- Первый экран ---------- */
 .hero{padding:72px 0 0;}
+.hero-full{position:relative;padding:0;color:#fff;background:#0F1B2D url('assets/sat-obzor-1280.jpg') center/cover no-repeat;}
+.hero-full::before{content:"";position:absolute;inset:0;background:linear-gradient(100deg,rgba(10,16,34,.93) 0%,rgba(10,16,34,.74) 45%,rgba(10,16,34,.28) 100%);}
+.hero-full-inner{position:relative;z-index:1;padding-top:110px;padding-bottom:90px;}
+.hero-full h1{color:#fff;margin-bottom:22px;}
+.hero-full .kicker{color:#C7CDE8;}
+.hero-full .lead{color:#E7EBF4;max-width:640px;margin-bottom:28px;}
+.hero-full .counters{position:relative;z-index:1;margin-top:0;background:rgba(15,22,46,.85);}
+.btn-ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.7);}
+.btn-ghost:hover{background:rgba(255,255,255,.14);color:#fff;}
+.hero-imgnote{font-size:13px;color:#B9C2CF;margin-top:28px;}
+.hero-imgnote a{color:#fff;}
 .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:start;}
+.sale-badge{
+  display:inline-block;background:var(--teal);color:#fff;font-size:14.5px;font-weight:700;
+  padding:8px 18px;border-radius:999px;margin-bottom:16px;letter-spacing:.02em;
+}
 .hero .kicker{font-size:14px;color:var(--muted);margin-bottom:18px;letter-spacing:.02em;}
 .hero h1{margin-bottom:22px;}
 .hero .lead{margin-bottom:28px;}
@@ -200,7 +215,7 @@ details.objects .footnote{padding:0 20px 18px;margin-top:8px;}
 .legal-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-top:36px;}
 
 /* Таймлайн */
-.timeline{list-style:none;margin:44px 0 0;padding:0;display:grid;grid-template-columns:repeat(5,1fr);gap:0;position:relative;}
+.timeline{list-style:none;margin:44px 0 0;padding:0;display:grid;grid-template-columns:repeat(6,1fr);gap:0;position:relative;}
 .timeline::before{content:"";position:absolute;left:0;right:0;top:7px;height:2px;background:var(--line);}
 .timeline li{position:relative;padding:26px 18px 0 0;}
 .timeline li::before{content:"";position:absolute;top:0;left:0;width:16px;height:16px;border-radius:50%;background:#fff;border:4px solid var(--teal);}
@@ -364,6 +379,8 @@ details.objects .footnote{padding:0 20px 18px;margin-top:8px;}
   .container{padding:0 16px;}
   .section{padding:56px 0;}
   .hero{padding-top:40px;}
+  .hero-full{padding-top:0;}
+  .hero-full-inner{padding-top:56px;padding-bottom:48px;}
   .cards,.cards.cols-2{grid-template-columns:1fr;}
   .havenot{grid-template-columns:1fr;}
   .distance-list{grid-template-columns:1fr;}
