@@ -394,14 +394,31 @@ function track(goal) {
   var box = $('#lightbox');
   if (!box) return;
   var img = $('#lbImg');
+  var video = $('#lbVideo');
   var cap = $('#lbCaption');
   var closeBtn = $('#lbClose');
   var lastFocus = null;
 
-  function open(href, caption, alt) {
+  /* href — изображение, data-video — ролик сценария (если есть, показываем его) */
+  function open(href, caption, alt, videoSrc, poster) {
     lastFocus = document.activeElement;
-    img.src = href;
-    img.alt = alt || '';
+    if (videoSrc) {
+      img.hidden = true;
+      img.src = '';
+      video.hidden = false;
+      video.poster = poster || '';
+      video.src = videoSrc;
+      video.currentTime = 0;
+      var p = video.play();
+      if (p && p.catch) p.catch(function () { /* автозапуск заблокирован — остаются элементы управления */ });
+    } else {
+      video.hidden = true;
+      video.removeAttribute('src');
+      video.load();
+      img.hidden = false;
+      img.src = href;
+      img.alt = alt || '';
+    }
     cap.textContent = caption || '';
     box.hidden = false;
     document.body.style.overflow = 'hidden';
@@ -410,6 +427,12 @@ function track(goal) {
   function close() {
     box.hidden = true;
     img.src = '';
+    if (!video.hidden) {
+      video.pause();
+      video.removeAttribute('src');
+      video.load();
+      video.hidden = true;
+    }
     document.body.style.overflow = '';
     if (lastFocus && lastFocus.focus) lastFocus.focus();
   }
@@ -419,13 +442,20 @@ function track(goal) {
     if (link) {
       e.preventDefault();
       var innerImg = link.querySelector('img');
-      open(link.getAttribute('href'), link.getAttribute('data-caption'), innerImg ? innerImg.alt : '');
+      open(
+        link.getAttribute('href'),
+        link.getAttribute('data-caption'),
+        innerImg ? innerImg.alt : '',
+        link.getAttribute('data-video'),
+        innerImg ? innerImg.getAttribute('src') : ''
+      );
+      if (link.getAttribute('data-video')) track('play_video');
       return;
     }
     if (!box.hidden && (e.target === box || e.target === closeBtn || e.target.closest('.lb-close'))) close();
   });
   box.addEventListener('click', function (e) {
-    if (e.target === img) close();
+    if (e.target === img) close();  /* по видео не закрываем — там свои элементы управления */
   });
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' && !box.hidden) close();

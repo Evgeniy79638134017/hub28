@@ -23,7 +23,10 @@
   --muted:#5B6B7F;
   --warn:#B45309;
   --container:1200px;
-  --radius:12px;
+  /* Характер формы: документный регистр — прямые углы у карточек, таблиц
+     и плашек; скругление только у кнопок и статус-бейджей. */
+  --radius:2px;
+  --radius-pill:999px;
 }
 
 /* ---------- Сброс и база ---------- */
@@ -66,16 +69,34 @@ p{margin:0 0 1em;}
 }
 
 /* ---------- Секции ---------- */
+/* Ритм: базовый шаг 96px, блоки доверия прижаты плотнее,
+   перед целевым действием — больше воздуха. */
 .section{padding:96px 0;}
-.section.alt{background:var(--bg-alt);}
+.section--tight{padding-top:64px;}
+.section--air{padding:128px 0 112px;}
+.section.alt{background:var(--bg-alt);position:relative;}
+/* Мягкий стык вместо резкой смены заливки */
+.section.alt::before{
+  content:"";position:absolute;left:0;right:0;top:0;height:64px;
+  background:linear-gradient(180deg,#fff 0%,rgba(245,247,250,0) 100%);pointer-events:none;
+}
+.section.alt::after{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:64px;
+  background:linear-gradient(0deg,#fff 0%,rgba(245,247,250,0) 100%);pointer-events:none;
+}
+.section.alt>.container{position:relative;z-index:1;}
 main>.section+.section{border-top:1px solid transparent;}
 
 /* ---------- Кнопки ---------- */
 .btn{
-  display:inline-block;padding:13px 26px;border-radius:10px;border:1px solid transparent;
+  display:inline-block;padding:13px 28px;border-radius:var(--radius-pill);border:1px solid transparent;
   font:600 16px/1.3 'Inter',system-ui,sans-serif;text-decoration:none;cursor:pointer;
-  transition:background .15s,color .15s,border-color .15s;min-height:44px;
+  transition:background .18s ease,color .18s ease,border-color .18s ease,transform .18s ease;
+  min-height:44px;
 }
+.btn-primary::after{content:" →";opacity:.55;transition:opacity .18s ease,margin-left .18s ease;}
+.btn-primary:hover::after{opacity:1;margin-left:3px;}
+.btn:active{transform:translateY(1px);}
 .btn-primary{background:var(--deep);color:#fff;}
 .btn-primary:hover{background:#141b66;color:#fff;}
 .btn-secondary{background:transparent;color:var(--deep);border-color:var(--deep);}
@@ -152,12 +173,47 @@ figcaption{font-size:13.5px;color:var(--muted);margin-top:10px;line-height:1.5;}
 
 /* ---------- Карточки ---------- */
 .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:36px;}
+
+/* Асимметрия: ядро актива — крупным блоком, остальное компактно */
+.asset-grid{display:grid;grid-template-columns:1.35fr 1fr;grid-auto-rows:auto;gap:24px;margin-top:36px;}
+.asset-grid .card-lead{grid-row:span 2;display:flex;flex-direction:column;background:var(--deep);border-color:var(--deep);color:#fff;}
+.asset-grid .card-lead h3,.asset-grid .card-lead .card-metric{color:#fff;}
+.asset-grid .card-lead .card-metric{color:#7FD8CF;font-size:30px;}
+.asset-grid .card-lead p{color:#DCE2EA;}
+.card-tag{
+  display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+  color:#7FD8CF;margin-bottom:12px;
+}
+
+/* Сценарии: первое направление — развёрнутой карточкой на две колонки */
+.cards-scenarios .card-lead{
+  grid-column:span 2;display:grid;grid-template-columns:1fr 1fr;gap:0;padding:0;overflow:hidden;
+}
+/* Кадр остаётся квадратным, как на остальных карточках:
+   растягивание по высоте срезало плашку «Проектная визуализация». */
+.cards-scenarios .card-lead .card-img{margin:0;border-radius:0;align-self:start;}
+.cards-scenarios .card-lead .card-img img{width:100%;height:auto;aspect-ratio:1/1;object-fit:contain;}
+.cards-scenarios .card-lead .card-body{padding:30px 30px 28px;align-self:center;}
+.cards-scenarios .card-lead h3{font-size:25px;line-height:32px;}
 .cards.cols-2{grid-template-columns:repeat(2,1fr);}
 .card{
   background:var(--bg);border:1px solid var(--line);border-radius:var(--radius);
   padding:26px 26px 24px;position:relative;
+  transition:border-color .25s ease,transform .25s cubic-bezier(.2,.6,.2,1);
 }
-.section.alt .card{background:#fff;}
+.card:hover{border-color:#C3CEDC;transform:translateY(-3px);}
+.asset-grid .card-lead:hover{border-color:var(--teal);transform:none;}
+/* На цветном фоне секции карточку отделяет сам фон — рамка не нужна */
+.section.alt .card{background:#fff;border-color:transparent;}
+.section.alt .card:hover{border-color:var(--line);}
+/* Ядро актива — тёмный блок, перебивает правило секции выше */
+.section.alt .asset-grid .card-lead{background:var(--deep);border-color:var(--deep);color:#fff;}
+.section.alt .asset-grid .card-lead:hover{border-color:var(--teal);}
+@media(prefers-reduced-motion:reduce){
+  .card,.card .card-img img,.btn{transition:none;}
+  .card:hover{transform:none;}
+  .card:hover .card-img img{transform:none;}
+}
 .card h3{margin-bottom:8px;}
 .card .card-metric{font-size:26px;font-weight:700;color:var(--teal);margin-bottom:14px;font-variant-numeric:tabular-nums;}
 .card p{margin-bottom:0;font-size:15.5px;}
@@ -171,8 +227,16 @@ figcaption{font-size:13.5px;color:var(--muted);margin-top:10px;line-height:1.5;}
 .badge.b-work{background:#F1F7E8;color:#5A7F2A;border-color:#DCEAC4;}
 .badge.b-check{background:#FBF3E4;color:var(--warn);border-color:#F0DFC0;}
 .badge.b-cond{background:var(--bg-alt);color:var(--muted);border-color:var(--line);}
-.card .card-img{display:block;margin:-26px -26px 20px;border-radius:11px 11px 0 0;overflow:hidden;position:relative;}
-.card .card-img img{width:100%;height:auto;display:block;}
+.card .card-img{display:block;margin:-26px -26px 20px;overflow:hidden;position:relative;}
+.card .card-img img{width:100%;height:auto;display:block;transition:transform .4s cubic-bezier(.2,.6,.2,1);}
+.card:hover .card-img img{transform:scale(1.045);}
+/* Метка «видео» на карточках со сценарным роликом */
+.card-img[data-video]::after{
+  content:"";position:absolute;left:50%;top:50%;width:56px;height:56px;margin:-28px 0 0 -28px;
+  border-radius:50%;background:rgba(15,27,45,.62) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23fff'%3E%3Cpath d='M8 5v14l11-7z'/%3E%3C/svg%3E") center/24px no-repeat;
+  transition:background-color .2s ease,transform .2s ease;
+}
+.card-img[data-video]:hover::after{background-color:rgba(38,166,154,.92);transform:scale(1.08);}
 .card.card-ask{background:var(--bg-alt);border-style:dashed;display:flex;flex-direction:column;}
 .card.card-ask .btn{margin-top:auto;align-self:flex-start;}
 .card.card-ask p{margin-bottom:18px;}
@@ -295,12 +359,35 @@ details.objects .footnote{padding:0 20px 18px;margin-top:8px;}
 .final-cta h2{margin-bottom:26px;}
 
 /* ---------- Футер ---------- */
-.site-footer{background:var(--ink);color:#B9C2CF;padding:48px 0 40px;font-size:14px;line-height:1.6;}
+.site-footer{background:var(--ink);color:#B9C2CF;padding:72px 0 44px;font-size:14px;line-height:1.6;position:relative;overflow:hidden;}
 .site-footer a{color:#DCE2EA;}
-.footer-grid{display:flex;gap:40px;align-items:flex-start;flex-wrap:wrap;}
+/* Мотив первого экрана: линия пути со шпалами */
+.site-footer::before{
+  content:"";position:absolute;left:0;right:0;top:0;height:14px;
+  background:
+    repeating-linear-gradient(90deg,rgba(139,195,74,.5) 0 3px,transparent 3px 26px),
+    linear-gradient(90deg,var(--lime),var(--teal) 45%,var(--deep));
+  opacity:.85;
+}
+.footer-contacts{
+  display:flex;gap:48px;flex-wrap:wrap;align-items:baseline;
+  padding-bottom:36px;margin-bottom:36px;border-bottom:1px solid rgba(255,255,255,.12);
+}
+.footer-contacts .fc-label{display:block;font-size:12.5px;color:#8A95A5;letter-spacing:.06em;margin-bottom:6px;}
+.footer-contacts a,.footer-contacts .fc-value{
+  font-size:26px;font-weight:700;color:#fff;text-decoration:none;font-variant-numeric:tabular-nums;
+  border-bottom:1px solid transparent;transition:border-color .2s ease,color .2s ease;
+}
+.footer-contacts a:hover{color:#7FD8CF;border-bottom-color:#7FD8CF;}
+.footer-grid{display:flex;gap:40px;align-items:flex-start;flex-wrap:wrap;justify-content:space-between;}
 .footer-grid .f-col{max-width:520px;}
 .site-footer img{height:44px;width:auto;margin-bottom:16px;}
 .site-footer .f-legal{margin-top:14px;font-size:13px;color:#8A95A5;}
+@media(max-width:767px){
+  .footer-contacts{gap:24px;flex-direction:column;padding-bottom:26px;margin-bottom:26px;}
+  .footer-contacts a,.footer-contacts .fc-value{font-size:21px;}
+  .site-footer{padding:52px 0 36px;}
+}
 
 /* ---------- Cookie ---------- */
 .cookie-bar{
@@ -329,7 +416,9 @@ details.objects .footnote{padding:0 20px 18px;margin-top:8px;}
   padding:32px 20px 24px;
 }
 .lightbox[hidden]{display:none;}
-.lightbox img{max-width:min(1600px,96vw);max-height:84vh;width:auto;height:auto;background:#fff;border-radius:8px;}
+.lightbox img,.lightbox video{max-width:min(1600px,96vw);max-height:84vh;width:auto;height:auto;background:#fff;border-radius:2px;}
+.lightbox video{background:#000;}
+.lightbox video[hidden],.lightbox img[hidden]{display:none;}
 .lb-caption{color:#C7CDE8;font-size:14px;margin:14px auto 0;max-width:900px;text-align:center;line-height:1.5;}
 .lb-close{
   position:absolute;top:14px;right:18px;width:46px;height:46px;border:none;border-radius:50%;
@@ -362,6 +451,8 @@ details.objects .footnote{padding:0 20px 18px;margin-top:8px;}
   .hero-grid{grid-template-columns:1fr;gap:36px;}
   .counters-grid,.stats-row{grid-template-columns:repeat(2,1fr);}
   .cards{grid-template-columns:repeat(2,1fr);}
+  .asset-grid{grid-template-columns:1fr 1fr;}
+  .asset-grid .card-lead{grid-row:auto;grid-column:span 2;}
   .legal-grid{grid-template-columns:1fr;}
   .timeline{grid-template-columns:1fr;gap:0;}
   .timeline::before{top:0;bottom:0;left:7px;right:auto;width:2px;height:auto;}
@@ -382,6 +473,12 @@ details.objects .footnote{padding:0 20px 18px;margin-top:8px;}
   .hero-full{padding-top:0;}
   .hero-full-inner{padding-top:56px;padding-bottom:48px;}
   .cards,.cards.cols-2{grid-template-columns:1fr;}
+  .asset-grid{grid-template-columns:1fr;}
+  .asset-grid .card-lead{grid-row:auto;grid-column:auto;}
+  .cards-scenarios .card-lead{grid-column:auto;grid-template-columns:1fr;}
+  .cards-scenarios .card-lead .card-body{padding:24px;}
+  .section--air{padding:72px 0 64px;}
+  .section--tight{padding-top:44px;}
   .havenot{grid-template-columns:1fr;}
   .distance-list{grid-template-columns:1fr;}
   .counter .stat-num{font-size:32px;}
