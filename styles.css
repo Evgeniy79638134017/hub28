@@ -161,7 +161,7 @@ figcaption{font-size:13.5px;color:var(--muted);margin-top:10px;line-height:1.5;}
 
 /* Счётчики */
 .counters{margin-top:56px;background:var(--deep);color:#fff;}
-.counters-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;padding:36px 24px;max-width:var(--container);margin:0 auto;}
+.counters-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:24px;padding:36px 24px;max-width:var(--container);margin:0 auto;}
 .counter .stat-num{font-size:44px;font-weight:700;color:#fff;line-height:1.1;}
 .counter .stat-num .unit{font-size:24px;font-weight:600;}
 .counter .stat-cap{font-size:13px;color:#C7CDE8;margin-top:6px;line-height:1.45;}
@@ -185,16 +185,11 @@ figcaption{font-size:13.5px;color:var(--muted);margin-top:10px;line-height:1.5;}
   color:#7FD8CF;margin-bottom:12px;
 }
 
-/* Сценарии: первое направление — развёрнутой карточкой на две колонки */
-.cards-scenarios .card-lead{
-  grid-column:span 2;display:grid;grid-template-columns:1fr 1fr;gap:0;padding:0;overflow:hidden;
-}
-/* Кадр остаётся квадратным, как на остальных карточках:
-   растягивание по высоте срезало плашку «Проектная визуализация». */
-.cards-scenarios .card-lead .card-img{margin:0;border-radius:0;align-self:start;}
-.cards-scenarios .card-lead .card-img img{width:100%;height:auto;aspect-ratio:1/1;object-fit:contain;}
-.cards-scenarios .card-lead .card-body{padding:30px 30px 28px;align-self:center;}
-.cards-scenarios .card-lead h3{font-size:25px;line-height:32px;}
+/* Сценарии: карточки одного размера — ряд начинается на одной высоте.
+   Широкая карточка ломала выравнивание соседних колонок. */
+.cards-scenarios .card-lead{padding:0;overflow:hidden;}
+.cards-scenarios .card-lead .card-img{margin:0;border-radius:0;}
+.cards-scenarios .card-lead .card-body{padding:26px;}
 .cards.cols-2{grid-template-columns:repeat(2,1fr);}
 .card{
   background:var(--bg);border:1px solid var(--line);border-radius:var(--radius);
@@ -271,6 +266,8 @@ details.objects .footnote{padding:0 20px 18px;margin-top:8px;}
 .map-fallback img{width:100%;}
 .distance-list{list-style:none;margin:28px 0 0;padding:0;display:grid;grid-template-columns:repeat(2,1fr);gap:12px 32px;max-width:760px;}
 .distance-list li{display:flex;gap:16px;align-items:baseline;border-bottom:1px solid var(--line);padding-bottom:10px;}
+.distance-list li.d-accent{border-bottom-color:var(--teal);}
+.distance-list li.d-accent strong{color:var(--deep);}
 .distance-list b{font-size:22px;color:var(--teal);font-variant-numeric:tabular-nums;white-space:nowrap;min-width:86px;font-weight:700;}
 .distance-list span{font-size:15px;}
 .conclusion{max-width:760px;margin-top:28px;}
@@ -475,7 +472,6 @@ details.objects .footnote{padding:0 20px 18px;margin-top:8px;}
   .cards,.cards.cols-2{grid-template-columns:1fr;}
   .asset-grid{grid-template-columns:1fr;}
   .asset-grid .card-lead{grid-row:auto;grid-column:auto;}
-  .cards-scenarios .card-lead{grid-column:auto;grid-template-columns:1fr;}
   .cards-scenarios .card-lead .card-body{padding:24px;}
   .section--air{padding:72px 0 64px;}
   .section--tight{padding-top:44px;}
