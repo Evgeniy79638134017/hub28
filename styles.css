@@ -353,6 +353,15 @@ details.objects .footnote{padding:0 20px 18px;margin-top:8px;}
 .warn-panel p{max-width:860px;}
 .warn-panel p:last-child{margin-bottom:0;}
 
+/* ---------- Иконки перечислений ---------- */
+.ic{width:22px;height:22px;flex:none;stroke-width:1.8;}
+.havenot li{display:flex;gap:12px;align-items:flex-start;}
+.havenot .col-have .ic{color:var(--teal);}
+.havenot .col-not .ic{color:var(--warn);}
+.doc-list li{display:flex;gap:12px;align-items:flex-start;padding-left:0;}
+.doc-list li::before{display:none;}
+.doc-list .ic{color:var(--teal);margin-top:2px;}
+
 /* ---------- Стоимость воссоздания ---------- */
 .rebuild-block{margin-bottom:56px;padding-bottom:44px;border-bottom:1px solid var(--line);}
 .rebuild-block h3{font-size:26px;line-height:32px;margin-bottom:10px;}

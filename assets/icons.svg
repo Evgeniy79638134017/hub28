@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+<!-- Линейный набор одной толщины (1.8), сетка 24×24, без заливок.
+     Подключается спрайтом: <svg class="ic"><use href="assets/icons.svg#i-rail"></use></svg> -->
+
+<symbol id="i-rail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M6 3v18M18 3v18"/><path d="M3 8h18M3 13h18M3 18h18"/>
+</symbol>
+
+<symbol id="i-doc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/>
+</symbol>
+
+<symbol id="i-land" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M3 8l6-3 6 3 6-3v11l-6 3-6-3-6 3z"/><path d="M9 5v11M15 8v11"/>
+</symbol>
+
+<symbol id="i-building" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-5h6v5"/><path d="M9 10h.01M15 10h.01"/>
+</symbol>
+
+<symbol id="i-power" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M13 2 4 14h7l-1 8 9-12h-7z"/>
+</symbol>
+
+<symbol id="i-road" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M7 3 4 21M17 3l3 18"/><path d="M12 4v3M12 11v3M12 18v3"/>
+</symbol>
+
+<symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M12 3 5 6v6c0 4 3 7 7 9 4-2 7-5 7-9V6z"/><path d="m9 12 2 2 4-4"/>
+</symbol>
+
+<symbol id="i-area" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M4 4h16v16H4z"/><path d="M4 9h16M9 4v16"/>
+</symbol>
+
+<symbol id="i-water" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M12 3s6 6.5 6 10a6 6 0 0 1-12 0c0-3.5 6-10 6-10z"/>
+</symbol>
+
+<symbol id="i-fence" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M5 21V9l2-3 2 3v12M15 21V9l2-3 2 3v12"/><path d="M3 12h18M3 16h18"/>
+</symbol>
+
+<symbol id="i-tools" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M14.7 6.3a4 4 0 0 0 5 5L21 21l-3 .5-8-8"/><path d="m6 6 3 3"/><path d="M3.5 8.5 8.5 3.5"/>
+</symbol>
+
+<symbol id="i-plant" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M12 21v-8"/><path d="M12 13c0-3-2-5-5-5 0 3 2 5 5 5z"/><path d="M12 13c0-3 2-5 5-5 0 3-2 5-5 5z"/>
+</symbol>
+
+<symbol id="i-map" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <path d="m9 4-6 3v13l6-3 6 3 6-3V4l-6 3z"/><path d="M9 4v13M15 7v13"/>
+</symbol>
+
+<symbol id="i-scale" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M12 3v18M7 21h10"/><path d="M4 8h16"/><path d="m4 8-2 6a3 3 0 0 0 6 0z"/><path d="m20 8-2 6a3 3 0 0 0 6 0z" transform="translate(-4)"/>
+</symbol>
+
+<symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <path d="m4 12 5 5L20 6"/>
+</symbol>
+
+<symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>
+</symbol>
+</svg>
