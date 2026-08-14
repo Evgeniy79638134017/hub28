@@ -418,6 +418,36 @@ function track(goal) {
   });
 })();
 
+/* ---------------- КОПИРОВАНИЕ КАДАСТРОВЫХ НОМЕРОВ ---------------- */
+
+(function () {
+  $all('.copy-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var value = btn.getAttribute('data-copy');
+      var done = function () {
+        var old = btn.textContent;
+        btn.textContent = 'Скопировано';
+        btn.classList.add('is-done');
+        setTimeout(function () { btn.textContent = old; btn.classList.remove('is-done'); }, 1800);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(value).then(done, function () { fallback(value, done); });
+      } else {
+        fallback(value, done);
+      }
+    });
+  });
+  function fallback(value, done) {
+    var ta = document.createElement('textarea');
+    ta.value = value;
+    ta.style.cssText = 'position:fixed;left:-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); done(); } catch (e) { /* остаётся выделение номера на странице */ }
+    document.body.removeChild(ta);
+  }
+})();
+
 /* ---------------- ЛУПА ПЕРВОГО ЭКРАНА ----------------
    Базовый слой — реальный спутник, под круглой маской — проектная
    визуализация того же кадра. Слои выровнены по контуру участка. */
