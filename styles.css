@@ -362,6 +362,12 @@ details.objects .footnote{padding:0 20px 18px;margin-top:8px;}
 .doc-list li::before{display:none;}
 .doc-list .ic{color:var(--teal);margin-top:2px;}
 
+/* Знак модуля в карточках права и форматов сделки: тот же линейный набор,
+   крупнее и без плашки — документный регистр, иконка читается как пометка
+   на полях, а не как элемент интерфейса. */
+.ic-card{width:30px;height:30px;display:block;color:var(--teal);margin-bottom:16px;}
+.card-ask .ic-card{color:var(--muted);}
+
 /* ---------- Стоимость воссоздания ---------- */
 .rebuild-block{margin-bottom:56px;padding-bottom:44px;border-bottom:1px solid var(--line);}
 .rebuild-block h3{font-size:26px;line-height:32px;margin-bottom:10px;}

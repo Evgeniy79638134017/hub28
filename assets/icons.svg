@@ -65,4 +65,58 @@
 <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
   <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>
 </symbol>
+
+<!-- Правовая конструкция (раздел 06) -->
+
+<!-- Срок: календарь со стрелкой вперёд — «49 лет, горизонт до 2075» -->
+<symbol id="i-term" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M4 6h16v14H4z"/><path d="M8 3v5M16 3v5M4 11h16"/><path d="M9 16h6"/><path d="m13 14 2 2-2 2"/>
+</symbol>
+
+<!-- Переуступка: встречные стрелки — право уходит к другому лицу -->
+<symbol id="i-transfer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M4 9h14"/><path d="m15 6 3 3-3 3"/><path d="M20 15H6"/><path d="m9 12-3 3 3 3"/>
+</symbol>
+
+<!-- Устойчивость договора: неразорванное звено цепи -->
+<symbol id="i-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/>
+</symbol>
+
+<!-- Титул: печать с галочкой и лентой — проверено судом и реестром -->
+<symbol id="i-verdict" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="12" cy="9" r="6"/><path d="m9.5 9 1.8 1.8L15 7"/><path d="M8.6 14.4 7.5 21l4.5-2.3L16.5 21l-1.1-6.6"/>
+</symbol>
+
+<!-- Форматы входа в проект (раздел 08) -->
+
+<!-- Доли: круг, поделённый на сектор -->
+<symbol id="i-shares" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="12" cy="12" r="9"/><path d="M12 3v9l7.8 4.5"/>
+</symbol>
+
+<!-- Совместное предприятие: два пересекающихся круга -->
+<symbol id="i-jv" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6"/>
+</symbol>
+
+<!-- Переуступка права с объектами: документ уходит к приобретателю -->
+<symbol id="i-assign" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h6"/><path d="M14 3v5h4"/><path d="M15 16h6"/><path d="m18.5 13.5 2.5 2.5-2.5 2.5"/>
+</symbol>
+
+<!-- Приобретение общества: портфель — покупается компания целиком -->
+<symbol id="i-company" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M4 8h16v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M9 8V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><path d="M4 13h16"/>
+</symbol>
+
+<!-- Долгосрочная аренда: ключ — доступ без сделки с активом -->
+<symbol id="i-lease" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="8" cy="15.5" r="3.5"/><path d="M10.6 13 20 3.6"/><path d="m16.6 7 2.4 2.4"/><path d="m14.2 9.4 2.4 2.4"/>
+</symbol>
+
+<!-- Своя конструкция: три блока и место под четвёртый -->
+<symbol id="i-custom" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4z"/><path d="M17 14v6M14 17h6"/>
+</symbol>
 </svg>
