@@ -353,6 +353,40 @@ details.objects .footnote{padding:0 20px 18px;margin-top:8px;}
 .warn-panel p{max-width:860px;}
 .warn-panel p:last-child{margin-bottom:0;}
 
+/* ---------- Проверьте сами ---------- */
+.verify-panel{
+  margin-top:36px;border:1px solid #BFE3DF;border-left:4px solid var(--teal);
+  background:#F0F9F8;padding:28px;border-radius:2px;
+}
+.verify-panel h3{color:#1F7A70;margin-bottom:10px;}
+.verify-panel p{max-width:820px;}
+.verify-list{list-style:none;margin:20px 0 16px;padding:0;display:grid;gap:12px;max-width:900px;}
+.verify-list li{
+  display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 18px;
+  background:#fff;border:1px solid #D5EAE7;padding:14px 18px;border-radius:2px;
+}
+.verify-list b{font-variant-numeric:tabular-nums;font-size:17px;color:var(--deep);}
+.verify-list span{color:var(--muted);font-size:15px;flex:1 1 auto;}
+.verify-list a{font-weight:600;font-size:15px;white-space:nowrap;}
+
+/* ---------- Первые шаги проекта ---------- */
+.steps-block{margin-top:44px;padding-top:36px;border-top:1px solid var(--line);}
+.steps-lead{max-width:820px;color:var(--muted);}
+.steps{list-style:none;margin:28px 0 0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:24px;counter-reset:s;}
+.steps li{display:flex;flex-direction:column;gap:8px;padding-top:18px;border-top:2px solid var(--teal);}
+.step-num{font-size:13px;font-weight:700;color:var(--teal);letter-spacing:.08em;font-variant-numeric:tabular-nums;}
+.steps b{font-size:17px;color:var(--deep);line-height:1.35;}
+.steps span:not(.step-num){font-size:15px;color:var(--muted);line-height:1.55;}
+
+/* ---------- Что после заявки ---------- */
+.after-request{
+  list-style:none;margin:26px 0 18px;padding:0;
+  display:grid;grid-template-columns:repeat(4,1fr);gap:20px;max-width:1100px;
+}
+.after-request li{display:flex;flex-direction:column;gap:6px;padding-left:16px;border-left:2px solid var(--line);}
+.after-request b{font-size:14px;color:var(--teal);text-transform:none;}
+.after-request span{font-size:15px;color:var(--ink);line-height:1.5;}
+
 /* ---------- Документы ---------- */
 .doc-list{list-style:none;margin:28px 0 32px;padding:0;max-width:820px;}
 .doc-list li{
@@ -500,6 +534,7 @@ details.objects .footnote{padding:0 20px 18px;margin-top:8px;}
   .hero-lens-grid{grid-template-columns:1fr;gap:36px;}
   .counters-grid,.stats-row{grid-template-columns:repeat(2,1fr);}
   .cards{grid-template-columns:repeat(2,1fr);}
+  .steps,.after-request{grid-template-columns:repeat(2,1fr);}
   .asset-grid{grid-template-columns:1fr 1fr;}
   .asset-grid .card-lead{grid-row:auto;grid-column:span 2;}
   .legal-grid{grid-template-columns:1fr;}
@@ -529,6 +564,8 @@ details.objects .footnote{padding:0 20px 18px;margin-top:8px;}
   .section--air{padding:72px 0 64px;}
   .section--tight{padding-top:44px;}
   .havenot{grid-template-columns:1fr;}
+  .steps,.after-request{grid-template-columns:1fr;}
+  .verify-list li{flex-direction:column;align-items:flex-start;gap:4px;}
   .distance-list{grid-template-columns:1fr;}
   .counter .stat-num{font-size:32px;}
   .stat .stat-num{font-size:32px;}

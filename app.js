@@ -13,7 +13,7 @@ var SITE_URL = 'https://hub28.ru';
 var LANGS_READY = false;
 
 // PDF-тизер: переключить на true, когда файл assets/teaser.pdf загружен.
-var TEASER_READY = false;
+var TEASER_READY = true;
 
 // Контакты Евгения — подставить перед публикацией.
 // Пока значения пустые, на странице остаётся «указывается при публикации».
@@ -24,9 +24,13 @@ var CONTACTS = {
   max: ''         // полная ссылка на профиль в MAX, например 'https://max.ru/u/...'
 };
 
-// Приём заявок: FormSubmit (AJAX) — пересылает заявки на почту.
-// Первая отправка требует одноразового подтверждения по письму на этот адрес.
-var FORM_ENDPOINT = 'https://formsubmit.co/ajax/tumoff@mail.ru';
+// Приём заявок. ВАЖНО (ч. 5 ст. 18 152-ФЗ): данные российских граждан должны
+// собираться в базах на территории РФ, поэтому зарубежные сервисы форм
+// (Formspree, FormSubmit и т. п.) здесь недопустимы.
+// Пока не подключён российский обработчик, форма работает без передачи данных
+// третьим лицам: письмо формируется в почтовом клиенте самого посетителя.
+// Когда появится обработчик на российском хостинге — указать его адрес здесь.
+var FORM_ENDPOINT = '';
 
 // Аналитика. Пустая строка = счётчик не грузится.
 var YM_ID = '';   // Яндекс.Метрика, номер счётчика
@@ -348,9 +352,35 @@ function track(goal) {
     if (honeypot && honeypot.value) return;
     if (Date.now() - openedAt < 3000) return;
 
+    /* Без внешнего обработчика письмо собирается в почтовом клиенте
+       посетителя — данные никуда не передаются по пути. */
     if (!FORM_ENDPOINT) {
-      status.className = 'form-status err';
-      status.innerHTML = fallbackContacts();
+      if (!CONTACTS.email) {
+        status.className = 'form-status err';
+        status.innerHTML = fallbackContacts();
+        return;
+      }
+      var body = [
+        'Имя: ' + name.value.trim(),
+        'Компания: ' + ($('#f-company').value.trim() || '—'),
+        'Телефон: ' + (phone.value.trim() || '—'),
+        'E-mail: ' + (email.value.trim() || '—'),
+        'Формат интереса: ' + interest.value,
+        '',
+        'Комментарий:',
+        $('#f-comment').value.trim() || '—',
+        '',
+        'Отправлено с ' + location.href
+      ].join('\n');
+      var href = 'mailto:' + CONTACTS.email +
+        '?subject=' + encodeURIComponent('Заявка с hub28.ru — площадка Среднебелая') +
+        '&body=' + encodeURIComponent(body);
+      window.location.href = href;
+      status.className = 'form-status ok';
+      status.innerHTML = 'Открылось окно почты с готовым письмом — отправьте его, и мы ответим в течение рабочего дня.' +
+        '<br>Если почтовая программа не открылась, напишите на <a href="mailto:' + CONTACTS.email + '">' + CONTACTS.email +
+        '</a>' + (CONTACTS.phone ? ' или позвоните: <a href="tel:' + CONTACTS.phone.replace(/[^\d+]/g, '') + '">' + CONTACTS.phone + '</a>' : '') + '.';
+      track('lead_form');
       return;
     }
 
