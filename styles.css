@@ -394,6 +394,13 @@ details.objects .footnote{padding:0 20px 18px;margin-top:8px;}
 .verify-list b{font-variant-numeric:tabular-nums;font-size:17px;color:var(--deep);}
 .verify-list span{color:var(--muted);font-size:15px;flex:1 1 auto;}
 .verify-list a{font-weight:600;font-size:15px;white-space:nowrap;}
+/* Кадастровый номер — ссылка на проверку в реестре, открывается в новой вкладке.
+   Наследует размер номера, а не общий стиль ссылок панели. */
+.verify-list .cad-link{
+  font-size:inherit;font-weight:inherit;color:var(--deep);text-decoration:none;
+  border-bottom:1px solid rgba(38,166,154,.45);
+}
+.verify-list .cad-link:hover{color:var(--teal);border-bottom-color:var(--teal);}
 .copy-btn{
   border:1px solid var(--teal);background:transparent;color:#1F7A70;
   font:600 14px/1 'Inter',system-ui,sans-serif;padding:9px 14px;border-radius:999px;
