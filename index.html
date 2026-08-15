@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" data-base="">
 <head>
 <!-- ============================================================
      SITE_URL: перед публикацией заменить https://hub28.ru
@@ -51,7 +51,7 @@
 
 <link rel="preload" href="assets/fonts/inter-400-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/inter-700-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="styles.css?v=10">
+<link rel="stylesheet" href="styles.css?v=11">
 
 <script type="application/ld+json">
 {
@@ -158,13 +158,13 @@
       <div class="lang-switch" aria-label="Выбор языка">
         <a class="lang current" href="./" aria-current="true">RU</a><span>·</span>
         <a class="lang" href="en/">EN</a><span>·</span>
-        <a class="lang is-disabled" href="cn/" aria-disabled="true" tabindex="-1">CN</a>
+        <a class="lang" href="cn/">CN</a>
       </div>
     </nav>
     <div class="lang-switch" aria-label="Выбор языка">
       <a class="lang current" href="./" aria-current="true">RU</a><span>·</span>
       <a class="lang" href="en/">EN</a><span>·</span>
-      <a class="lang is-disabled" href="cn/" aria-disabled="true" tabindex="-1">CN</a>
+      <a class="lang" href="cn/">CN</a>
     </div>
     <a class="btn btn-primary header-cta" href="#contact">Запросить материалы</a>
     <button class="burger" id="burgerBtn" aria-label="Открыть меню" aria-expanded="false" aria-controls="mainNav">
@@ -816,7 +816,7 @@
       <li><b>В согласованное время</b><span>организуем осмотр площадки — приехать можно с техническим специалистом</span></li>
       <li><b>Дальше</b><span>обсуждаем конструкцию сделки под вашу задачу: переуступка, доли, совместный проект</span></li>
     </ol>
-    <p class="small" style="margin:-6px 0 26px;">Никаких рассылок и звонков «для прогрева» — только по вашему обращению.</p>
+    <p class="small" style="margin:-6px 0 26px;">Никаких рассылок и звонков «для прогрева» — только по вашему обращению. Площадка в Амурской области: разница с Москвой +6 часов, поэтому в форме есть часовой пояс и удобное время для звонка.</p>
 
     <div class="contact-grid">
       <form class="lead-form" id="leadForm" novalidate>
@@ -830,15 +830,34 @@
           <input type="text" id="f-company" name="company" autocomplete="organization">
           <span class="error-msg"></span>
         </div>
-        <div class="field">
-          <label for="f-phone">Телефон</label>
-          <input type="tel" id="f-phone" name="phone" inputmode="tel" placeholder="+7" autocomplete="tel">
-          <span class="error-msg">Укажите телефон или e-mail — достаточно одного</span>
+        <div class="field-row">
+          <div class="field">
+            <label for="f-phone">Телефон</label>
+            <input type="tel" id="f-phone" name="phone" inputmode="tel" placeholder="+7" autocomplete="tel">
+            <span class="error-msg">Укажите телефон или e-mail — достаточно одного</span>
+          </div>
+          <div class="field">
+            <label for="f-email">E-mail</label>
+            <input type="email" id="f-email" name="email" inputmode="email" autocomplete="email">
+            <span class="error-msg">Проверьте адрес e-mail</span>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="f-city">Город</label>
+            <input type="text" id="f-city" name="city" autocomplete="address-level2" placeholder="откуда вы звоните">
+            <span class="error-msg"></span>
+          </div>
+          <div class="field">
+            <label for="f-tz">Ваш часовой пояс</label>
+            <select id="f-tz" name="tz"></select>
+            <span class="error-msg"></span>
+          </div>
         </div>
         <div class="field">
-          <label for="f-email">E-mail</label>
-          <input type="email" id="f-email" name="email" inputmode="email" autocomplete="email">
-          <span class="error-msg">Проверьте адрес e-mail</span>
+          <label for="f-call">Когда удобно принять звонок</label>
+          <select id="f-call" name="call"></select>
+          <span class="field-hint" id="callHint"></span>
         </div>
         <div class="field">
           <label for="f-interest">Формат интереса <span class="req">*</span></label>
@@ -875,6 +894,7 @@
       <aside class="contact-side">
         <h3>ООО «Среднебельский Элеватор»</h3>
         <p style="margin:0 0 14px;font-size:15px;color:var(--muted);">Тумов Евгений Геннадьевич, генеральный директор</p>
+        <p class="owner-clock" id="ownerClock"></p>
         <div class="contact-row"><span class="c-label">Телефон</span><span data-contact="phone">указывается при публикации</span></div>
         <div class="contact-row"><span class="c-label">E-mail</span><span data-contact="email">указывается при публикации</span></div>
         <div class="contact-row"><span class="c-label">Telegram</span><span data-contact="telegram">указывается при публикации</span></div>
@@ -921,7 +941,7 @@
     <div class="f-col">
       <p><a data-contact="telegram-link" href="#contact" hidden>Написать в Telegram</a></p>
       <p><a href="privacy.html">Политика обработки персональных данных</a></p>
-      <p class="f-legal"><img src="assets/logo-ilab-h.png" alt="ИИщенко LAB" width="132" height="56" loading="lazy" style="height:28px;width:auto;opacity:.75;display:block;margin-bottom:8px;">Материалы подготовлены ИИщенко LAB · © 2026 · v2.0</p>
+      <p class="f-legal">© 2026 · v2.0</p>
     </div>
   </div>
 </footer>
@@ -942,6 +962,6 @@
   <p class="lb-caption" id="lbCaption"></p>
 </div>
 
-<script src="app.js?v=8" defer></script>
+<script src="app.js?v=9" defer></script>
 </body>
 </html>

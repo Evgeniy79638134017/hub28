@@ -10,7 +10,7 @@
 var SITE_URL = 'https://hub28.ru';
 
 // Языковые версии: переключить на true, когда /en/ и /cn/ готовы.
-var LANGS_READY = false;
+var LANGS_READY = true;
 
 // PDF-тизер: переключить на true, когда файл assets/teaser.pdf загружен.
 var TEASER_READY = true;
@@ -24,13 +24,29 @@ var CONTACTS = {
   max: ''         // полная ссылка на профиль в MAX, например 'https://max.ru/u/...'
 };
 
-// Приём заявок. ВАЖНО (ч. 5 ст. 18 152-ФЗ): данные российских граждан должны
-// собираться в базах на территории РФ, поэтому зарубежные сервисы форм
-// (Formspree, FormSubmit и т. п.) здесь недопустимы.
-// Пока не подключён российский обработчик, форма работает без передачи данных
-// третьим лицам: письмо формируется в почтовом клиенте самого посетителя.
-// Когда появится обработчик на российском хостинге — указать его адрес здесь.
+// ---------- ПРИЁМ ЗАЯВОК ----------
+// Форма отправляется прямо со страницы, посетителя никуда не уводит.
+// Канал доставки выбирается первым из настроенных:
+//   1) FORM_ENDPOINT — POST JSON на наш обработчик (предпочтительно: данные
+//      российских граждан по ч. 5 ст. 18 152-ФЗ должны собираться в базе на
+//      территории РФ, поэтому зарубежные сервисы форм здесь недопустимы);
+//   2) TELEGRAM — прямая отправка в Telegram владельцу, работает на статике
+//      без сервера; токен виден в коде, поэтому бот должен уметь только
+//      писать в один чат;
+//   3) mailto — запасной путь, письмо собирается в почтовом клиенте
+//      посетителя (последний рубеж, чтобы заявка не потерялась).
 var FORM_ENDPOINT = '';
+
+var TELEGRAM = {
+  token: '',   // токен бота, формат '123456:AA...'
+  chatId: ''   // id чата владельца
+};
+
+// Часовой пояс владельца: Благовещенск, UTC+9 (МСК+6).
+var OWNER_TZ = 'Asia/Yakutsk';
+var OWNER_UTC_OFFSET = 9;
+// Рабочее окно владельца по его времени.
+var OWNER_HOURS = [9, 20];
 
 // Аналитика. Пустая строка = счётчик не грузится.
 var YM_ID = '';   // Яндекс.Метрика, номер счётчика
@@ -39,14 +55,152 @@ var GA4_ID = '';  // Google Analytics 4, опционально
 // Координаты точек карты [долгота, широта].
 // ВНИМАНИЕ: координаты площадки — приблизительные, заменить на центроид
 // участка из выписки ЕГРН перед публикацией (открытая позиция № 3 ТЗ).
-var MAP_POINTS = [
-  { name: 'Площадка Среднебелая, 11,07 га', note: '', coords: [128.058, 50.678], main: true },
-  { name: 'Станция примыкания, Забайкальская ж/д', note: 'станция Среднебелая', coords: [128.052, 50.672] },
-  { name: 'Контейнерный терминал, запуск 2026', note: 'сухой порт «Благовещенск» — 12 км по железной дороге', coords: [128.135, 50.605] },
-  { name: 'Белогорск — переработка сельхозпродукции', note: '60 км, новые перерабатывающие мощности', coords: [128.474, 50.921] },
-  { name: 'Международный переход Россия — Китай', note: 'мост Благовещенск — Хэйхэ, таможенный пункт пропуска Кани-Курган — около 70 км', coords: [127.588, 50.196] },
-  { name: 'Административный центр области', note: 'Благовещенск — 75 км', coords: [127.535, 50.290] }
+var MAP_COORDS = [
+  { key: 'site',     coords: [128.058, 50.678], main: true },
+  { key: 'station',  coords: [128.052, 50.672] },
+  { key: 'dryport',  coords: [128.135, 50.605] },
+  { key: 'belogorsk',coords: [128.474, 50.921] },
+  { key: 'crossing', coords: [127.588, 50.196] },
+  { key: 'capital',  coords: [127.535, 50.290] }
 ];
+
+/* ---------------- ЯЗЫК И БАЗОВЫЙ ПУТЬ ----------------
+   Одна и та же сборка обслуживает /, /en/ и /cn/. Язык берём из <html lang>,
+   префикс к статике — из data-base, иначе картинки и вендор в подпапках
+   разрешаются относительно /en/ и /cn/ и не находятся. */
+
+var LANG = (document.documentElement.getAttribute('lang') || 'ru').toLowerCase().slice(0, 2);
+if (LANG === 'zh') LANG = 'cn';
+if (LANG !== 'en' && LANG !== 'cn') LANG = 'ru';
+
+var BASE = document.documentElement.getAttribute('data-base') || '';
+
+var STRINGS = {
+  ru: {
+    copied: 'Скопировано',
+    sending: 'Отправляем…',
+    submit: 'Отправить заявку',
+    lensHintTouch: 'Проведите пальцем — увидите проект',
+    mailSubject: 'Заявка с hub28.ru — площадка Среднебелая',
+    mailFields: ['Имя', 'Компания', 'Телефон', 'E-mail', 'Формат интереса', 'Комментарий', 'Отправлено с'],
+    mailOpened: 'Открылось окно почты с готовым письмом — отправьте его, и мы ответим в течение рабочего дня.',
+    mailFallback: 'Если почтовая программа не открылась, напишите на ',
+    mailOrCall: ' или позвоните: ',
+    sent: 'Заявка отправлена. Мы вернёмся к вам в течение одного рабочего дня.',
+    formDownBoth: 'Форма временно недоступна — ',
+    formDownPlain: 'Форма временно недоступна. Попробуйте отправить заявку позднее.',
+    writeTo: 'напишите на ',
+    inTelegram: 'в Telegram: ',
+    or: ' или ',
+    inMax: 'написать в MAX',
+    toastTitle: 'Заявка отправлена',
+    toastText: 'Мы вернёмся к вам в течение одного рабочего дня.',
+    toastClose: 'Закрыть уведомление',
+    ownerNow: 'Сейчас в Благовещенске',
+    ownerNight: 'у собственника ночь — звонок лучше запланировать на утро',
+    ownerWork: 'рабочее время, можно звонить',
+    ownerEve: 'рабочий день закончился',
+    meansThere: 'По времени Благовещенска это ',
+    tzYours: 'ваш часовой пояс',
+    callOpts: [['now', 'Можно прямо сейчас'], ['9-12', 'Утро, 9:00–12:00'], ['12-17', 'День, 12:00–17:00'], ['17-20', 'Вечер, 17:00–20:00'], ['mail', 'Звонить не нужно — пишите на почту']],
+    callNowNote: 'Позвоним, как только увидим заявку.',
+    callMailNote: 'Ответим письмом, звонить не будем.',
+    tzCities: { 2: 'Калининград', 3: 'Москва', 4: 'Самара', 5: 'Екатеринбург', 6: 'Омск', 7: 'Красноярск', 8: 'Иркутск', 9: 'Благовещенск, Якутск', 10: 'Владивосток', 11: 'Магадан', 12: 'Камчатка' },
+    map: {
+      site: ['Площадка Среднебелая, 11,07 га', ''],
+      station: ['Станция примыкания, Забайкальская ж/д', 'станция Среднебелая'],
+      dryport: ['Контейнерный терминал, запуск 2026', 'сухой порт «Благовещенск» — 12 км по железной дороге'],
+      belogorsk: ['Белогорск — переработка сельхозпродукции', '60 км, новые перерабатывающие мощности'],
+      crossing: ['Международный переход Россия — Китай', 'мост Благовещенск — Хэйхэ, таможенный пункт пропуска Кани-Курган — около 70 км'],
+      capital: ['Административный центр области', 'Благовещенск — 75 км']
+    }
+  },
+  en: {
+    copied: 'Copied',
+    sending: 'Sending…',
+    submit: 'Send the request',
+    lensHintTouch: 'Swipe to see the project',
+    mailSubject: 'Request from hub28.ru — Srednebelaya industrial site',
+    mailFields: ['Name', 'Company', 'Phone', 'E-mail', 'Interest', 'Comment', 'Sent from'],
+    mailOpened: 'Your mail client has opened with a prepared message — send it and we will reply within one business day.',
+    mailFallback: 'If the mail client did not open, write to ',
+    mailOrCall: ' or call: ',
+    sent: 'The request has been sent. We will get back to you within one business day.',
+    formDownBoth: 'The form is temporarily unavailable — ',
+    formDownPlain: 'The form is temporarily unavailable. Please try again later.',
+    writeTo: 'write to ',
+    inTelegram: 'on Telegram: ',
+    or: ' or ',
+    inMax: 'write on MAX',
+    toastTitle: 'Request sent',
+    toastText: 'We will get back to you within one business day.',
+    toastClose: 'Close notification',
+    ownerNow: 'Local time in Blagoveshchensk',
+    ownerNight: 'it is night at the owner’s end — better to plan a morning call',
+    ownerWork: 'business hours, a call is fine',
+    ownerEve: 'the business day is over',
+    meansThere: 'In Blagoveshchensk time that is ',
+    tzYours: 'your time zone',
+    callOpts: [['now', 'Any time now'], ['9-12', 'Morning, 9:00–12:00'], ['12-17', 'Daytime, 12:00–17:00'], ['17-20', 'Evening, 17:00–20:00'], ['mail', 'No call needed — write by e-mail']],
+    callNowNote: 'We will call as soon as we see the request.',
+    callMailNote: 'We will reply by e-mail and will not call.',
+    tzCities: { 2: 'Kaliningrad', 3: 'Moscow', 4: 'Samara', 5: 'Yekaterinburg', 6: 'Omsk', 7: 'Krasnoyarsk', 8: 'Irkutsk, Beijing', 9: 'Blagoveshchensk, Yakutsk', 10: 'Vladivostok', 11: 'Magadan', 12: 'Kamchatka' },
+    map: {
+      site: ['Srednebelaya site, 11.07 ha', ''],
+      station: ['Connecting station, Trans-Baikal Railway', 'Srednebelaya station'],
+      dryport: ['Container terminal, opened 2026', 'Blagoveshchensk dry port — 12 km by rail'],
+      belogorsk: ['Belogorsk — agricultural processing', '60 km, new processing capacity'],
+      crossing: ['International Russia — China crossing', 'Blagoveshchensk — Heihe bridge, Kani-Kurgan customs checkpoint — about 70 km'],
+      capital: ['Regional capital', 'Blagoveshchensk — 75 km']
+    }
+  },
+  cn: {
+    copied: '已复制',
+    sending: '发送中…',
+    submit: '提交索取申请',
+    lensHintTouch: '滑动查看项目效果',
+    mailSubject: '来自 hub28.ru 的咨询 — 中别拉亚工业用地',
+    mailFields: ['姓名', '公司', '电话', '电子邮箱', '合作方式', '备注', '来源页面'],
+    mailOpened: '邮件客户端已打开并生成邮件，发送后我们将在一个工作日内回复。',
+    mailFallback: '如果邮件客户端未打开，请发送至 ',
+    mailOrCall: ' 或致电：',
+    sent: '申请已发送，我们将在一个工作日内回复。',
+    formDownBoth: '表单暂时不可用 — ',
+    formDownPlain: '表单暂时不可用，请稍后再试。',
+    writeTo: '请发送邮件至 ',
+    inTelegram: 'Telegram：',
+    or: ' 或 ',
+    inMax: '通过 MAX 联系',
+    toastTitle: '申请已发送',
+    toastText: '我们将在一个工作日内回复。',
+    toastClose: '关闭提示',
+    ownerNow: '布拉戈维申斯克当地时间',
+    ownerNight: '当地为夜间，建议安排在上午通话',
+    ownerWork: '工作时间，可以致电',
+    ownerEve: '工作日已结束',
+    meansThere: '按布拉戈维申斯克时间为 ',
+    tzYours: '您所在时区',
+    callOpts: [['now', '现在即可'], ['9-12', '上午 9:00–12:00'], ['12-17', '下午 12:00–17:00'], ['17-20', '傍晚 17:00–20:00'], ['mail', '无需来电，请发邮件']],
+    callNowNote: '我们看到申请后会立即致电。',
+    callMailNote: '我们将以邮件回复，不会致电。',
+    tzCities: { 3: '莫斯科', 5: '叶卡捷琳堡', 7: '克拉斯诺亚尔斯克', 8: '北京、伊尔库茨克', 9: '布拉戈维申斯克、雅库茨克', 10: '符拉迪沃斯托克' },
+    map: {
+      site: ['中别拉亚地块，11.07 公顷', ''],
+      station: ['接轨站，外贝加尔铁路局', '中别拉亚站'],
+      dryport: ['集装箱码头，2026 年投入运营', '"布拉戈维申斯克"内陆港 — 铁路里程 12 公里'],
+      belogorsk: ['别洛戈尔斯克 — 农产品加工', '60 公里，新增加工产能'],
+      crossing: ['中俄国际口岸', '布拉戈维申斯克—黑河公路大桥，卡尼库尔干口岸 — 约 70 公里'],
+      capital: ['州行政中心', '布拉戈维申斯克 — 75 公里']
+    }
+  }
+};
+
+var T = STRINGS[LANG];
+
+var MAP_POINTS = MAP_COORDS.map(function (p) {
+  var n = T.map[p.key];
+  return { name: n[0], note: n[1], coords: p.coords, main: !!p.main };
+});
 
 /* ---------------- СЛУЖЕБНОЕ ---------------- */
 
@@ -229,11 +383,11 @@ function track(goal) {
 
     var css = document.createElement('link');
     css.rel = 'stylesheet';
-    css.href = 'assets/vendor/maplibre-gl.css';
+    css.href = BASE + 'assets/vendor/maplibre-gl.css';
     document.head.appendChild(css);
 
     var js = document.createElement('script');
-    js.src = 'assets/vendor/maplibre-gl.js';
+    js.src = BASE + 'assets/vendor/maplibre-gl.js';
     js.onload = initMap;
     js.onerror = function () { /* остаёмся на статичной схеме */ };
     document.head.appendChild(js);
@@ -293,6 +447,59 @@ function track(goal) {
   }
 })();
 
+/* ---------------- ВСПЛЫВАЮЩЕЕ УВЕДОМЛЕНИЕ ---------------- */
+
+function showToast(title, text) {
+  var old = $('#toast');
+  if (old) old.parentNode.removeChild(old);
+
+  var box = document.createElement('div');
+  box.className = 'toast';
+  box.id = 'toast';
+  box.setAttribute('role', 'status');
+  box.setAttribute('aria-live', 'polite');
+  box.innerHTML =
+    '<span class="toast-mark" aria-hidden="true"></span>' +
+    '<span class="toast-body"><b>' + title + '</b><span>' + text + '</span></span>' +
+    '<button type="button" class="toast-x" aria-label="' + T.toastClose + '">&#215;</button>';
+  document.body.appendChild(box);
+  requestAnimationFrame(function () { box.classList.add('is-in'); });
+
+  var hide = function () {
+    box.classList.remove('is-in');
+    setTimeout(function () { if (box.parentNode) box.parentNode.removeChild(box); }, 400);
+  };
+  box.querySelector('.toast-x').addEventListener('click', hide);
+  setTimeout(hide, 9000);
+}
+
+/* ---------------- ВРЕМЯ У СОБСТВЕННИКА ----------------
+   Благовещенск — UTC+9 круглый год, перевода часов нет, поэтому считаем
+   фиксированным смещением, не полагаясь на базу зон в браузере. */
+
+function pad2(n) { return (n < 10 ? '0' : '') + n; }
+
+function ownerDate() {
+  var d = new Date();
+  return new Date(d.getTime() + d.getTimezoneOffset() * 60000 + OWNER_UTC_OFFSET * 3600000);
+}
+
+(function () {
+  var el = $('#ownerClock');
+  if (!el) return;
+  var tick = function () {
+    var d = ownerDate();
+    var h = d.getHours();
+    var note = (h >= OWNER_HOURS[0] && h < OWNER_HOURS[1]) ? T.ownerWork
+             : (h >= OWNER_HOURS[1] && h < 23) ? T.ownerEve
+             : T.ownerNight;
+    el.innerHTML = '<b>' + T.ownerNow + ' ' + pad2(h) + ':' + pad2(d.getMinutes()) + '</b> — ' + note;
+    el.classList.toggle('is-night', !(h >= OWNER_HOURS[0] && h < OWNER_HOURS[1]));
+  };
+  tick();
+  setInterval(tick, 30000);
+})();
+
 /* ---------------- ФОРМА ---------------- */
 
 (function () {
@@ -303,6 +510,51 @@ function track(goal) {
   var submitBtn = $('#submitBtn');
   var openedAt = Date.now();
 
+  var tzSel = $('#f-tz');
+  var callSel = $('#f-call');
+  var callHint = $('#callHint');
+
+  /* Часовые пояса: список смещений, свой определяется автоматически */
+  var myOffset = Math.round(-new Date().getTimezoneOffset() / 60);
+  if (tzSel && !tzSel.options.length) {
+    for (var off = -11; off <= 13; off++) {
+      var city = T.tzCities[off];
+      var label = 'UTC' + (off >= 0 ? '+' : '−') + pad2(Math.abs(off)) + ':00' + (city ? ' · ' + city : '');
+      if (off === myOffset) label += ' — ' + T.tzYours;
+      var o = document.createElement('option');
+      o.value = String(off);
+      o.textContent = label;
+      if (off === myOffset) o.selected = true;
+      tzSel.appendChild(o);
+    }
+  }
+
+  /* Окно звонка: подписи из словаря языка */
+  if (callSel && !callSel.options.length) {
+    T.callOpts.forEach(function (pair) {
+      var o = document.createElement('option');
+      o.value = pair[0];
+      o.textContent = pair[1];
+      callSel.appendChild(o);
+    });
+  }
+
+  /* Пересчёт выбранного окна в благовещенское время */
+  function updateCallHint() {
+    if (!callHint || !callSel || !tzSel) return;
+    var v = callSel.value;
+    if (v === 'now') { callHint.textContent = T.callNowNote; return; }
+    if (v === 'mail') { callHint.textContent = T.callMailNote; return; }
+    var parts = v.split('-');
+    var shift = OWNER_UTC_OFFSET - parseInt(tzSel.value, 10);
+    var a = (parseInt(parts[0], 10) + shift + 24) % 24;
+    var b = (parseInt(parts[1], 10) + shift + 24) % 24;
+    callHint.textContent = T.meansThere + pad2(a) + ':00–' + pad2(b) + ':00' + (LANG === 'cn' ? '。' : '.');
+  }
+  if (callSel) callSel.addEventListener('change', updateCallHint);
+  if (tzSel) tzSel.addEventListener('change', updateCallHint);
+  updateCallHint();
+
   function setInvalid(input, invalid) {
     var field = input.closest('.field');
     if (field) field.classList.toggle('invalid', invalid);
@@ -310,9 +562,79 @@ function track(goal) {
 
   function fallbackContacts() {
     var parts = [];
-    if (CONTACTS.email) parts.push('напишите на <a href="mailto:' + CONTACTS.email + '">' + CONTACTS.email + '</a>');
-    if (CONTACTS.telegram) parts.push('в Telegram: <a href="https://t.me/' + CONTACTS.telegram + '" target="_blank" rel="noopener">@' + CONTACTS.telegram + '</a>');
-    return parts.length ? 'Форма временно недоступна — ' + parts.join(' или ') + '.' : 'Форма временно недоступна. Попробуйте отправить заявку позднее.';
+    if (CONTACTS.email) parts.push(T.writeTo + '<a href="mailto:' + CONTACTS.email + '">' + CONTACTS.email + '</a>');
+    if (CONTACTS.telegram) parts.push(T.inTelegram + '<a href="https://t.me/' + CONTACTS.telegram + '" target="_blank" rel="noopener">@' + CONTACTS.telegram + '</a>');
+    return parts.length ? T.formDownBoth + parts.join(T.or) + '.' : T.formDownPlain;
+  }
+
+  /* Значения полей в порядке словаря T.mailFields */
+  function collect() {
+    var callLabel = callSel && callSel.selectedIndex >= 0 ? callSel.options[callSel.selectedIndex].text : '';
+    var tzLabel = tzSel && tzSel.selectedIndex >= 0 ? tzSel.options[tzSel.selectedIndex].text : '';
+    var d = ownerDate();
+    return {
+      name: $('#f-name').value.trim(),
+      company: $('#f-company').value.trim(),
+      phone: $('#f-phone').value.trim(),
+      email: $('#f-email').value.trim(),
+      city: $('#f-city') ? $('#f-city').value.trim() : '',
+      tz: tzLabel,
+      call: callLabel,
+      interest: $('#f-interest').value,
+      comment: $('#f-comment').value.trim(),
+      lang: LANG,
+      page: location.href,
+      ownerTime: pad2(d.getHours()) + ':' + pad2(d.getMinutes())
+    };
+  }
+
+  function asText(v) {
+    return [
+      'Заявка с hub28.ru',
+      '',
+      'Имя: ' + v.name,
+      'Компания: ' + (v.company || '—'),
+      'Телефон: ' + (v.phone || '—'),
+      'E-mail: ' + (v.email || '—'),
+      'Город: ' + (v.city || '—'),
+      'Часовой пояс: ' + v.tz,
+      'Когда звонить: ' + v.call,
+      'Формат интереса: ' + v.interest,
+      'Комментарий: ' + (v.comment || '—'),
+      '',
+      'Язык страницы: ' + v.lang + ' · ' + v.page,
+      'Отправлено в ' + v.ownerTime + ' по Благовещенску'
+    ].join('\n');
+  }
+
+  function succeed(v) {
+    form.reset();
+    if (tzSel) tzSel.value = String(myOffset);
+    updateCallHint();
+    status.className = 'form-status ok';
+    status.textContent = T.sent;
+    showToast(T.toastTitle, T.toastText);
+    track('lead_form');
+  }
+
+  function fail() {
+    status.className = 'form-status err';
+    status.innerHTML = fallbackContacts();
+  }
+
+  /* Последний рубеж: обработчик не настроен — собираем письмо в почтовом
+     клиенте посетителя, чтобы заявка не потерялась молча. */
+  function viaMailto(v) {
+    if (!CONTACTS.email) { fail(); return; }
+    window.location.href = 'mailto:' + CONTACTS.email +
+      '?subject=' + encodeURIComponent(T.mailSubject) +
+      '&body=' + encodeURIComponent(asText(v));
+    status.className = 'form-status ok';
+    status.innerHTML = T.mailOpened + '<br>' + T.mailFallback +
+      '<a href="mailto:' + CONTACTS.email + '">' + CONTACTS.email + '</a>' +
+      (CONTACTS.phone ? T.mailOrCall + '<a href="tel:' + CONTACTS.phone.replace(/[^\d+]/g, '') + '">' + CONTACTS.phone + '</a>' : '') + '.';
+    showToast(T.toastTitle, T.toastText);
+    track('lead_form');
   }
 
   form.addEventListener('submit', function (e) {
@@ -352,68 +674,34 @@ function track(goal) {
     if (honeypot && honeypot.value) return;
     if (Date.now() - openedAt < 3000) return;
 
-    /* Без внешнего обработчика письмо собирается в почтовом клиенте
-       посетителя — данные никуда не передаются по пути. */
-    if (!FORM_ENDPOINT) {
-      if (!CONTACTS.email) {
-        status.className = 'form-status err';
-        status.innerHTML = fallbackContacts();
-        return;
-      }
-      var body = [
-        'Имя: ' + name.value.trim(),
-        'Компания: ' + ($('#f-company').value.trim() || '—'),
-        'Телефон: ' + (phone.value.trim() || '—'),
-        'E-mail: ' + (email.value.trim() || '—'),
-        'Формат интереса: ' + interest.value,
-        '',
-        'Комментарий:',
-        $('#f-comment').value.trim() || '—',
-        '',
-        'Отправлено с ' + location.href
-      ].join('\n');
-      var href = 'mailto:' + CONTACTS.email +
-        '?subject=' + encodeURIComponent('Заявка с hub28.ru — площадка Среднебелая') +
-        '&body=' + encodeURIComponent(body);
-      window.location.href = href;
-      status.className = 'form-status ok';
-      status.innerHTML = 'Открылось окно почты с готовым письмом — отправьте его, и мы ответим в течение рабочего дня.' +
-        '<br>Если почтовая программа не открылась, напишите на <a href="mailto:' + CONTACTS.email + '">' + CONTACTS.email +
-        '</a>' + (CONTACTS.phone ? ' или позвоните: <a href="tel:' + CONTACTS.phone.replace(/[^\d+]/g, '') + '">' + CONTACTS.phone + '</a>' : '') + '.';
-      track('lead_form');
-      return;
-    }
+    var v = collect();
+
+    if (!FORM_ENDPOINT && !TELEGRAM.token) { viaMailto(v); return; }
 
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Отправляем…';
+    submitBtn.textContent = T.sending;
 
-    var payload = {
-      _subject: 'Заявка с hub28.ru — площадка Среднебелая',
-      name: name.value.trim(),
-      company: $('#f-company').value.trim(),
-      phone: phone.value.trim(),
-      email: email.value.trim(),
-      interest: interest.value,
-      comment: $('#f-comment').value.trim(),
-      page: location.href
-    };
+    var req = FORM_ENDPOINT
+      ? fetch(FORM_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify(Object.assign({ _subject: T.mailSubject, text: asText(v) }, v))
+        })
+      : fetch('https://api.telegram.org/bot' + TELEGRAM.token + '/sendMessage', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chat_id: TELEGRAM.chatId, text: asText(v), disable_web_page_preview: true })
+        });
 
-    fetch(FORM_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify(payload)
-    }).then(function (r) {
+    req.then(function (r) {
       if (!r.ok) throw new Error('form endpoint error');
-      form.reset();
-      status.className = 'form-status ok';
-      status.textContent = 'Заявка отправлена. Мы вернёмся к вам в течение одного рабочего дня.';
-      track('lead_form');
+      succeed(v);
     }).catch(function () {
-      status.className = 'form-status err';
-      status.innerHTML = fallbackContacts();
+      /* канал не ответил — не теряем заявку, отдаём её в почтовый клиент */
+      viaMailto(v);
     }).finally(function () {
       submitBtn.disabled = false;
-      submitBtn.textContent = 'Отправить заявку';
+      submitBtn.textContent = T.submit;
     });
   });
 })();
@@ -426,7 +714,7 @@ function track(goal) {
       var value = btn.getAttribute('data-copy');
       var done = function () {
         var old = btn.textContent;
-        btn.textContent = 'Скопировано';
+        btn.textContent = T.copied;
         btn.classList.add('is-done');
         setTimeout(function () { btn.textContent = old; btn.classList.remove('is-done'); }, 1800);
       };
@@ -463,7 +751,7 @@ function track(goal) {
   /* На тач-экране курсора нет — меняем подсказку */
   if (window.matchMedia('(hover: none)').matches) {
     var hint = $('#lensHint');
-    if (hint) hint.textContent = 'Проведите пальцем — увидите проект';
+    if (hint) hint.textContent = T.lensHintTouch;
   }
 
   function radius() {
@@ -507,15 +795,15 @@ function track(goal) {
     var key = btn.getAttribute('data-layer');
     var preload = function () {
       var i = new Image();
-      i.src = 'assets/' + SRC[key] + '-1200.webp';
+      i.src = BASE + 'assets/' + SRC[key] + '-1200.webp';
     };
     btn.addEventListener('mouseenter', preload, { once: true });
     btn.addEventListener('click', function () {
       tabs.forEach(function (b) { b.classList.remove('is-active'); });
       btn.classList.add('is-active');
       var base = SRC[key];
-      layer.srcset = 'assets/' + base + '-768.webp 768w, assets/' + base + '-1200.webp 1200w, assets/' + base + '-1600.webp 1600w';
-      layer.src = 'assets/' + base + '-1200.jpg';
+      layer.srcset = BASE + 'assets/' + base + '-768.webp 768w, ' + BASE + 'assets/' + base + '-1200.webp 1200w, ' + BASE + 'assets/' + base + '-1600.webp 1600w';
+      layer.src = BASE + 'assets/' + base + '-1200.jpg';
       activate(true);
     });
   });
