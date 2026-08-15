@@ -102,6 +102,10 @@ var STRINGS = {
     ownerEve: 'рабочий день закончился',
     meansThere: 'По времени Благовещенска это ',
     tzYours: 'ваш часовой пояс',
+    ffHead: 'Заявка готова и скопирована в буфер обмена — вставьте её в письмо или сообщение.',
+    ffCopy: 'Скопировать заявку',
+    ffSendTo: 'Отправить: ',
+    ffStatus: 'Автоматическая отправка сейчас недоступна — заявка ниже, скопирована в буфер обмена.',
     callOpts: [['now', 'Можно прямо сейчас'], ['9-12', 'Утро, 9:00–12:00'], ['12-17', 'День, 12:00–17:00'], ['17-20', 'Вечер, 17:00–20:00'], ['mail', 'Звонить не нужно — пишите на почту']],
     callNowNote: 'Позвоним, как только увидим заявку.',
     callMailNote: 'Ответим письмом, звонить не будем.',
@@ -141,6 +145,10 @@ var STRINGS = {
     ownerEve: 'the business day is over',
     meansThere: 'In Blagoveshchensk time that is ',
     tzYours: 'your time zone',
+    ffHead: 'Your request is ready and copied to the clipboard — paste it into an e-mail or a message.',
+    ffCopy: 'Copy the request',
+    ffSendTo: 'Send it to: ',
+    ffStatus: 'Automatic sending is unavailable right now — the request is below and already copied to your clipboard.',
     callOpts: [['now', 'Any time now'], ['9-12', 'Morning, 9:00–12:00'], ['12-17', 'Daytime, 12:00–17:00'], ['17-20', 'Evening, 17:00–20:00'], ['mail', 'No call needed — write by e-mail']],
     callNowNote: 'We will call as soon as we see the request.',
     callMailNote: 'We will reply by e-mail and will not call.',
@@ -180,6 +188,10 @@ var STRINGS = {
     ownerEve: '工作日已结束',
     meansThere: '按布拉戈维申斯克时间为 ',
     tzYours: '您所在时区',
+    ffHead: '申请内容已生成并复制到剪贴板，请粘贴到邮件或消息中发送。',
+    ffCopy: '复制申请内容',
+    ffSendTo: '发送至：',
+    ffStatus: '当前无法自动发送 —— 申请内容如下，已复制到剪贴板。',
     callOpts: [['now', '现在即可'], ['9-12', '上午 9:00–12:00'], ['12-17', '下午 12:00–17:00'], ['17-20', '傍晚 17:00–20:00'], ['mail', '无需来电，请发邮件']],
     callNowNote: '我们看到申请后会立即致电。',
     callMailNote: '我们将以邮件回复，不会致电。',
@@ -622,19 +634,47 @@ function ownerDate() {
     status.innerHTML = fallbackContacts();
   }
 
-  /* Последний рубеж: обработчик не настроен — собираем письмо в почтовом
-     клиенте посетителя, чтобы заявка не потерялась молча. */
-  function viaMailto(v) {
-    if (!CONTACTS.email) { fail(); return; }
-    window.location.href = 'mailto:' + CONTACTS.email +
-      '?subject=' + encodeURIComponent(T.mailSubject) +
-      '&body=' + encodeURIComponent(asText(v));
-    status.className = 'form-status ok';
-    status.innerHTML = T.mailOpened + '<br>' + T.mailFallback +
-      '<a href="mailto:' + CONTACTS.email + '">' + CONTACTS.email + '</a>' +
-      (CONTACTS.phone ? T.mailOrCall + '<a href="tel:' + CONTACTS.phone.replace(/[^\d+]/g, '') + '">' + CONTACTS.phone + '</a>' : '') + '.';
-    showToast(T.toastTitle, T.toastText);
-    track('lead_form');
+  /* Запасной путь, когда канал не настроен или не ответил.
+     Почтовый клиент НЕ открываем: на части машин он не настроен и окно
+     висит. Вместо этого кладём готовый текст заявки в буфер обмена и
+     показываем его на странице вместе с прямыми контактами. */
+  function manualFallback(v) {
+    var text = asText(v);
+    var panel = $('#formFallback');
+    if (!panel) {
+      panel = document.createElement('div');
+      panel.className = 'form-fallback';
+      panel.id = 'formFallback';
+      form.appendChild(panel);
+    }
+    var links = [];
+    if (CONTACTS.email) links.push('<a href="mailto:' + CONTACTS.email + '?subject=' + encodeURIComponent(T.mailSubject) + '">' + CONTACTS.email + '</a>');
+    if (CONTACTS.phone) links.push('<a href="tel:' + CONTACTS.phone.replace(/[^\d+]/g, '') + '">' + CONTACTS.phone + '</a>');
+    if (CONTACTS.telegram) links.push('<a href="https://t.me/' + CONTACTS.telegram + '" target="_blank" rel="noopener">@' + CONTACTS.telegram + '</a>');
+
+    panel.innerHTML =
+      '<p class="ff-head">' + T.ffHead + '</p>' +
+      '<pre class="ff-text">' + text.replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }) + '</pre>' +
+      '<p class="ff-actions"><button type="button" class="copy-btn" id="ffCopy">' + T.ffCopy + '</button>' +
+      (links.length ? '<span class="ff-links">' + T.ffSendTo + links.join(' · ') + '</span>' : '') + '</p>';
+    panel.hidden = false;
+
+    var copy = function () {
+      var btn = $('#ffCopy');
+      var done = function () {
+        btn.textContent = T.copied;
+        btn.classList.add('is-done');
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, function () {});
+      }
+    };
+    $('#ffCopy').addEventListener('click', copy);
+    copy();
+
+    status.className = 'form-status err';
+    status.textContent = T.ffStatus;
+    panel.scrollIntoView({ block: 'nearest' });
   }
 
   form.addEventListener('submit', function (e) {
@@ -676,7 +716,7 @@ function ownerDate() {
 
     var v = collect();
 
-    if (!FORM_ENDPOINT && !TELEGRAM.token) { viaMailto(v); return; }
+    if (!FORM_ENDPOINT && !TELEGRAM.token) { manualFallback(v); return; }
 
     submitBtn.disabled = true;
     submitBtn.textContent = T.sending;
@@ -697,8 +737,8 @@ function ownerDate() {
       if (!r.ok) throw new Error('form endpoint error');
       succeed(v);
     }).catch(function () {
-      /* канал не ответил — не теряем заявку, отдаём её в почтовый клиент */
-      viaMailto(v);
+      /* канал не ответил — заявку не теряем, отдаём текст посетителю */
+      manualFallback(v);
     }).finally(function () {
       submitBtn.disabled = false;
       submitBtn.textContent = T.submit;

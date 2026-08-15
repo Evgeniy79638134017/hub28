@@ -485,6 +485,22 @@ details.objects .footnote{padding:0 20px 18px;margin-top:8px;}
 }
 @media(max-width:520px){.field-row{grid-template-columns:1fr;}}
 
+/* Запасная выдача заявки, когда канал доставки не ответил */
+.form-fallback{
+  margin-top:18px;padding:16px 18px;border-radius:10px;
+  background:#FDF4EC;border:1px solid #F0D3B4;
+}
+.form-fallback .ff-head{margin:0 0 10px;font-size:14px;color:#8A5320;}
+.form-fallback .ff-text{
+  margin:0;padding:12px 14px;border-radius:8px;background:#fff;border:1px solid var(--line);
+  font:400 13px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  white-space:pre-wrap;word-break:break-word;max-height:260px;overflow:auto;color:var(--ink);
+}
+.form-fallback .ff-actions{
+  margin:12px 0 0;display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:13.5px;color:#8A5320;
+}
+.form-fallback .ff-links a{font-weight:600;}
+
 /* Часы собственника: чтобы посетитель не звонил ночью */
 .owner-clock{
   margin:0 0 16px;padding:12px 14px;border-radius:8px;font-size:14px;line-height:1.45;
