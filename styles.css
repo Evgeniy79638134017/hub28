@@ -264,6 +264,9 @@ figcaption{font-size:13.5px;color:var(--muted);margin-top:10px;line-height:1.5;}
 .card .card-metric{font-size:26px;font-weight:700;color:var(--teal);margin-bottom:14px;font-variant-numeric:tabular-nums;}
 .card p{margin-bottom:0;font-size:15.5px;}
 .card p+p{margin-top:.8em;}
+/* Рыночный контекст в карточке сценария: тише основного текста — это ориентир
+   по открытым источникам, а не характеристика самой площадки */
+.card .card-extra{font-size:13.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:.7em;}
 .badge{
   display:inline-block;font-size:12px;font-weight:600;letter-spacing:.03em;
   padding:4px 10px;border-radius:999px;margin-bottom:14px;
