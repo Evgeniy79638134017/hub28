@@ -11,6 +11,13 @@
 @font-face{font-family:'Inter';font-style:normal;font-weight:700;font-display:swap;src:url('assets/fonts/inter-700-cyrillic.woff2') format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;}
 @font-face{font-family:'Inter';font-style:normal;font-weight:700;font-display:swap;src:url('assets/fonts/inter-700-latin.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}
 
+/* ---------- Заголовки: Bitter (вариативный, 600–700), self-hosted ---------- */
+@font-face{font-family:'Bitter';font-style:normal;font-weight:600 700;font-display:swap;src:url('assets/fonts/bitter-600-cyrillic.woff2') format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;}
+@font-face{font-family:'Bitter';font-style:normal;font-weight:600 700;font-display:swap;src:url('assets/fonts/bitter-600-latin.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}
+/* ---------- Цифры и номера: JetBrains Mono 500, self-hosted ---------- */
+@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:500;font-display:swap;src:url('assets/fonts/jetbrains-mono-500-cyrillic.woff2') format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;}
+@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:500;font-display:swap;src:url('assets/fonts/jetbrains-mono-500-latin.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}
+
 /* ---------- Переменные ---------- */
 :root{
   --ink:#0F1B2D;
@@ -25,6 +32,9 @@
   --container:1200px;
   /* Характер формы: документный регистр — прямые углы у карточек, таблиц
      и плашек; скругление только у кнопок и статус-бейджей. */
+  --display:'Bitter',Georgia,'Times New Roman',serif;
+  --sans:'Inter',system-ui,-apple-system,'Segoe UI',Arial,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Consolas,monospace;
   --radius:2px;
   --radius-pill:999px;
 }
@@ -35,7 +45,7 @@
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
 body{
   margin:0;
-  font-family:'Inter',system-ui,-apple-system,'Segoe UI',Arial,sans-serif;
+  font-family:var(--sans);
   font-size:17px;line-height:1.62;color:var(--ink);background:var(--bg);
 }
 img{max-width:100%;height:auto;display:block;}
@@ -688,4 +698,59 @@ details.objects .footnote{padding:0 20px 18px;margin-top:8px;}
   .brand b{font-size:14px;}
   .brand span{font-size:11px;}
   .counters-grid{grid-template-columns:1fr 1fr;}
+}
+
+/* Строка исполнителя в подвале. Мелко и приглушённо: покупатель смотрит на
+   актив, а не на подрядчика. Логотип ведёт на faktlab.ru. */
+.footer-credit{display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  margin-top:28px;padding-top:18px;border-top:1px solid rgba(255,255,255,.08);
+  font-size:12.5px;color:#7A8595;}
+.footer-credit .fcr-logo{display:inline-flex;opacity:.7;transition:opacity .18s ease;}
+.footer-credit .fcr-logo:hover,.footer-credit .fcr-logo:focus-visible{opacity:1;}
+.footer-credit img{display:block;height:22px;width:auto;}
+@media (max-width:520px){.footer-credit{gap:8px;font-size:12px;}}
+
+/* ============================================================
+   Типографический слой (18.08.2026)
+   Заголовки уходят в сериф, доказательная цифра — в моноширинный.
+   Смысл: страница читается как паспорт актива, а не как лендинг.
+   Китайская версия сериф не берёт — для иероглифов он не нужен и вреден,
+   там остаётся системный CJK-стек.
+   ============================================================ */
+h1,h2,h3{font-family:var(--display);letter-spacing:-.015em;}
+h1{font-weight:700;}
+h2,h3{font-weight:600;}
+:lang(zh) h1,:lang(zh) h2,:lang(zh) h3{font-family:var(--sans);letter-spacing:0;}
+
+/* Надзаголовок секции — узнаваемая метка разворота документа */
+.sec-label{font-family:var(--mono);font-weight:500;letter-spacing:.06em;font-size:12.5px;}
+
+/* Цифры, кадастровые номера, табличные значения */
+.stat-num,.num,td.num,.kv-value,.fact-num,.card-extra,
+.hero-facts b,.spec-table td:last-child{font-variant-numeric:tabular-nums;}
+.stat-num,.fact-num,.hero-facts b{font-family:var(--mono);font-weight:500;letter-spacing:-.01em;}
+.cadastre,code,kbd{font-family:var(--mono);font-weight:500;font-size:.94em;}
+
+/* ---------- Появление блоков при прокрутке ---------- */
+/* Класс rv-init ставит скрипт: без JS ничего не прячется и страница читается
+   целиком. Сдвиг короткий — это документ, а не презентация. */
+@media (prefers-reduced-motion:no-preference){
+  .rv-init{opacity:0;transform:translateY(14px);
+    transition:opacity .5s ease,transform .5s cubic-bezier(.22,.61,.36,1);}
+  .rv-init.is-in{opacity:1;transform:none;}
+}
+
+/* ---------- Кнопка заявки, всплывающая после первого экрана ---------- */
+.fab-cta{
+  position:fixed;right:20px;bottom:20px;z-index:110;
+  padding:12px 22px;font-size:15px;box-shadow:0 6px 22px rgba(15,27,45,.18);
+  opacity:0;visibility:hidden;transform:translateY(12px);
+  transition:opacity .22s ease,transform .22s ease,visibility .22s;
+}
+.fab-cta.is-on{opacity:1;visibility:visible;transform:none;}
+@media (max-width:520px){
+  .fab-cta{right:14px;left:14px;text-align:center;padding:13px 18px;}
+}
+@media (prefers-reduced-motion:reduce){
+  .fab-cta{transition:none;transform:none;}
 }

@@ -1015,3 +1015,87 @@ function ownerDate() {
   events.forEach(function (ev) { window.addEventListener(ev, once, { passive: true, once: true }); });
   setTimeout(loadAnalytics, 3000);
 })();
+
+
+/* ============================================================
+   Появление блоков при прокрутке и всплывающая кнопка заявки.
+   Добавлено 18.08.2026 — приёмы перенесены с сайта услуг faktlab.ru.
+   Разметку не трогаем: оба приёма навешиваются на готовые классы.
+   ============================================================ */
+(function () {
+  'use strict';
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---- блоки проявляются лесенкой ---- */
+  /* Только два акцентных момента на странице, а не «всё всплывает».
+     Сценарии — там лесенка читается как перечисление вариантов; ключевые
+     цифры — там она поддерживает счётчики. Остальное появляется сразу:
+     сплошной fade-in по странице — метка сгенерированного лендинга. */
+  var TARGETS = '#scenarios .card, .stat';
+  var items = [].slice.call(document.querySelectorAll(TARGETS));
+
+  if (items.length && !reduce && 'IntersectionObserver' in window) {
+    /* прячем только после того, как убедились, что скрипт работает:
+       без JS страница остаётся полностью видимой */
+    items.forEach(function (el) { el.classList.add('rv-init'); });
+
+    var obs = new IntersectionObserver(function (entries, o) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        /* соседи в одном ряду проявляются со сдвигом — глаз читает порядок */
+        var group = [].slice.call(e.target.parentNode.children).filter(function (n) {
+          return n.classList && n.classList.contains('rv-init');
+        });
+        var i = group.indexOf(e.target);
+        if (i > 0) e.target.style.transitionDelay = Math.min(i, 5) * 70 + 'ms';
+        e.target.classList.add('is-in');
+        o.unobserve(e.target);
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+    items.forEach(function (el) { obs.observe(el); });
+
+    /* Страховка. Анимация — украшение, видимость текста — обязательство.
+       Если observer по любой причине не сработал (фоновая вкладка, экзотический
+       браузер, встроенный просмотрщик), через три секунды показываем всё как есть.
+       Проверено 18.08: во встроенном браузере без отрисовки observer молчит,
+       и без этой страховки покупатель увидел бы пустую страницу. */
+    setTimeout(function () {
+      items.forEach(function (el) {
+        if (!el.classList.contains('is-in')) {
+          el.style.transitionDelay = '0ms';
+          el.classList.add('is-in');
+        }
+      });
+    }, 3000);
+  }
+
+  /* ---- кнопка заявки, всплывающая после первого экрана ---- */
+  var headerCta = document.querySelector('.header-cta');
+  var contact = document.getElementById('contact');
+  if (headerCta && contact) {
+    var fab = document.createElement('a');
+    fab.className = 'fab-cta btn btn-primary';
+    fab.href = headerCta.getAttribute('href') || '#contact';
+    fab.textContent = headerCta.textContent.trim();   /* подпись на языке страницы */
+    fab.setAttribute('data-goal', 'click_fab_cta');
+    document.body.appendChild(fab);
+
+    var cookie = document.querySelector('.cookie-bar');
+    var onScroll = function () {
+      /* показываем после первого экрана и убираем, когда человек дошёл до формы */
+      var atContacts = contact.getBoundingClientRect().top < window.innerHeight * 0.9;
+      var passed = window.scrollY > window.innerHeight * 0.9;
+      /* На телефоне плашка про cookie занимает треть экрана. Показывать над
+         ней ещё и кнопку во всю ширину — значит закрыть половину страницы,
+         поэтому на узких экранах ждём, пока плашку закроют. */
+      var h = (cookie && cookie.classList.contains('visible')) ? cookie.offsetHeight : 0;
+      var narrow = window.innerWidth < 640;
+      fab.classList.toggle('is-on', passed && !atContacts && !(narrow && h));
+      fab.style.bottom = (20 + h) + 'px';
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+  }
+})();
