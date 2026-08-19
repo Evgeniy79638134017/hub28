@@ -44,4 +44,7 @@ Allow: /
 User-agent: cohere-ai
 Allow: /
 
+# Выжимка для ИИ-ассистентов
+# https://hub28.ru/llms.txt
+
 Sitemap: https://hub28.ru/sitemap.xml
