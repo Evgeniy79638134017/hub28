@@ -37,10 +37,11 @@ var CONTACTS = {
 //      посетителя (последний рубеж, чтобы заявка не потерялась).
 var FORM_ENDPOINT = '';
 
-var TELEGRAM = {
-  token: '',   // токен бота, формат '123456:AA...'
-  chatId: ''   // id чата владельца
-};
+// Прямой отправки в Telegram здесь больше нет и быть не должно.
+// Токен бота в коде страницы — это публичный токен: код открыт любому
+// посетителю. Любой, кто его увидит, сможет писать от имени бота и читать
+// его переписку. Если нужен канал доставки заявок — только FORM_ENDPOINT,
+// то есть обработчик на стороне сервера, где токен остаётся закрытым.
 
 // Часовой пояс владельца: Благовещенск, UTC+9 (МСК+6).
 var OWNER_TZ = 'Asia/Yakutsk';
@@ -716,22 +717,16 @@ function ownerDate() {
 
     var v = collect();
 
-    if (!FORM_ENDPOINT && !TELEGRAM.token) { manualFallback(v); return; }
+    if (!FORM_ENDPOINT) { manualFallback(v); return; }
 
     submitBtn.disabled = true;
     submitBtn.textContent = T.sending;
 
-    var req = FORM_ENDPOINT
-      ? fetch(FORM_ENDPOINT, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-          body: JSON.stringify(Object.assign({ _subject: T.mailSubject, text: asText(v) }, v))
-        })
-      : fetch('https://api.telegram.org/bot' + TELEGRAM.token + '/sendMessage', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ chat_id: TELEGRAM.chatId, text: asText(v), disable_web_page_preview: true })
-        });
+    var req = fetch(FORM_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(Object.assign({ _subject: T.mailSubject, text: asText(v) }, v))
+    });
 
     req.then(function (r) {
       if (!r.ok) throw new Error('form endpoint error');
