@@ -705,10 +705,15 @@ details.objects .footnote{padding:0 20px 18px;margin-top:8px;}
 .footer-credit{display:flex;align-items:center;gap:12px;flex-wrap:wrap;
   margin-top:28px;padding-top:18px;border-top:1px solid rgba(255,255,255,.08);
   font-size:12.5px;color:#7A8595;}
-.footer-credit .fcr-logo{display:inline-flex;opacity:.7;transition:opacity .18s ease;}
+.footer-credit .fcr-logo{display:inline-flex;opacity:.92;transition:opacity .18s ease;}
 .footer-credit .fcr-logo:hover,.footer-credit .fcr-logo:focus-visible{opacity:1;}
-.footer-credit img{display:block;height:22px;width:auto;}
-@media (max-width:520px){.footer-credit{gap:8px;font-size:12px;}}
+.footer-credit img{display:block;height:28px;width:auto;}
+@media (max-width:520px){
+  /* На телефоне подпись уходит под логотип: в строку они не влезают,
+     а прижатый к краю мелкий логотип на 375 px просто теряется. */
+  .footer-credit{gap:10px;font-size:12px;flex-direction:column;align-items:flex-start;}
+  .footer-credit img{height:32px;}
+}
 
 /* ============================================================
    Типографический слой (18.08.2026)
