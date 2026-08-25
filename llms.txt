@@ -59,6 +59,7 @@
 - Форматы входа: https://hub28.ru/#entry
 - Документы по запросу: https://hub28.ru/#docs
 - Вопросы: https://hub28.ru/#faq
+- Источники всех внешних цифр: https://hub28.ru/sources.html
 
 ## Материалы
 - Тизер площадки, 13 полос, PDF: https://hub28.ru/assets/teaser.pdf
