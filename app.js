@@ -115,7 +115,7 @@ var STRINGS = {
       site: ['Площадка Среднебелая, 11,07 га', ''],
       station: ['Станция примыкания, Забайкальская ж/д', 'станция Среднебелая'],
       dryport: ['Контейнерный терминал, запуск 2026', 'сухой порт «Благовещенск» — 12 км по железной дороге'],
-      belogorsk: ['Белогорск — переработка сельхозпродукции', '60 км, новые перерабатывающие мощности'],
+      belogorsk: ['Белогорск — переработка сельхозпродукции', '56 км, новые перерабатывающие мощности'],
       crossing: ['Международный переход Россия — Китай', 'мост Благовещенск — Хэйхэ, таможенный пункт пропуска Кани-Курган — около 70 км'],
       capital: ['Административный центр области', 'Благовещенск — 75 км']
     }
@@ -158,7 +158,7 @@ var STRINGS = {
       site: ['Srednebelaya site, 11.07 ha', ''],
       station: ['Connecting station, Trans-Baikal Railway', 'Srednebelaya station'],
       dryport: ['Container terminal, opened 2026', 'Blagoveshchensk dry port — 12 km by rail'],
-      belogorsk: ['Belogorsk — agricultural processing', '60 km, new processing capacity'],
+      belogorsk: ['Belogorsk — agricultural processing', '56 km, new processing capacity'],
       crossing: ['International Russia — China crossing', 'Blagoveshchensk — Heihe bridge, Kani-Kurgan customs checkpoint — about 70 km'],
       capital: ['Regional capital', 'Blagoveshchensk — 75 km']
     }
@@ -201,7 +201,7 @@ var STRINGS = {
       site: ['中别拉亚地块，11.07 公顷', ''],
       station: ['接轨站，外贝加尔铁路局', '中别拉亚站'],
       dryport: ['集装箱码头，2026 年投入运营', '"布拉戈维申斯克"内陆港 — 铁路里程 12 公里'],
-      belogorsk: ['别洛戈尔斯克 — 农产品加工', '60 公里，新增加工产能'],
+      belogorsk: ['别洛戈尔斯克 — 农产品加工', '56 公里，新增加工产能'],
       crossing: ['中俄国际口岸', '布拉戈维申斯克—黑河公路大桥，卡尼库尔干口岸 — 约 70 公里'],
       capital: ['州行政中心', '布拉戈维申斯克 — 75 公里']
     }

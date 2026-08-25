@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 640" role="img" aria-labelledby="sdTitle sdDesc" font-family="Inter, Arial, sans-serif">
   <title id="sdTitle">Схема расстояний от площадки Среднебелая</title>
-  <desc id="sdDesc">Линейная схема: Белогорск в 60 километрах западнее площадки, сухой порт «Благовещенск» в 12 километрах по железной дороге, автомобильный мост Благовещенск — Хэйхэ примерно в 70 километрах, Благовещенск в 75 километрах.</desc>
+  <desc id="sdDesc">Линейная схема: Белогорск в 56 километрах западнее площадки, сухой порт «Благовещенск» в 12 километрах по железной дороге, автомобильный мост Благовещенск — Хэйхэ примерно в 70 километрах, Благовещенск в 75 километрах.</desc>
 
   <rect width="1400" height="640" fill="#FFFFFF"/>
 
@@ -28,7 +28,7 @@
     <path d="M 190 230 l 14 -6 0 12 z"/>
     <path d="M 635 230 l -14 -6 0 12 z"/>
   </g>
-  <text x="412" y="216" font-size="19" fill="#1F7A70" text-anchor="middle" font-weight="600">60 км по железной дороге</text>
+  <text x="412" y="216" font-size="19" fill="#1F7A70" text-anchor="middle" font-weight="600">56 км по автодороге</text>
 
   <g stroke="#26A69A" stroke-width="2.5" fill="#26A69A">
     <line x1="700" y1="230" x2="965" y2="230"/>
@@ -41,7 +41,7 @@
   <circle cx="180" cy="330" r="16" fill="#1A237E"/>
   <text x="180" y="285" font-size="21" fill="#1A237E" text-anchor="middle" font-weight="700">Белогорск</text>
   <text x="180" y="395" font-size="15.5" fill="#5B6B7F" text-anchor="middle">
-    <tspan x="180" dy="0">60 км</tspan>
+    <tspan x="180" dy="0">56 км</tspan>
     <tspan x="180" dy="22">новые перерабатывающие</tspan>
     <tspan x="180" dy="22">мощности</tspan>
   </text>

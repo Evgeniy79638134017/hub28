@@ -89,7 +89,7 @@
   <g>
     <line x1="180" y1="620" x2="70" y2="690" stroke="#5B6B7F" stroke-width="2.5"/>
     <path d="M 70 690 l 21 -6 -10 17 z" fill="#5B6B7F" stroke="#5B6B7F"/>
-    <text x="195" y="618" font-size="16" fill="#5B6B7F">Белогорск · 60 км</text>
+    <text x="195" y="618" font-size="16" fill="#5B6B7F">Белогорск · 56 км</text>
   </g>
 
   <!-- Север -->
