@@ -820,11 +820,16 @@ function ownerDate() {
   });
 
   /* Переключение сценария под лупой */
+  /* Слой лупы берётся из той же визуализации, что стоит на карточке этого
+     сценария: собираются они одним скриптом, поэтому подпись и картинка
+     разойтись не могут. Раньше файлы жили отдельно и перепутались. */
   var SRC = {
     terminal: 'lens-terminal',
     sklad: 'lens-sklad',
     container: 'lens-container',
-    wagons: 'lens-wagons'
+    wagons: 'lens-wagons',
+    udobreniya: 'lens-udobreniya',
+    baza: 'lens-baza'
   };
   tabs.forEach(function (btn) {
     var key = btn.getAttribute('data-layer');
